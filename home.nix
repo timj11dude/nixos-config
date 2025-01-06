@@ -8,19 +8,19 @@
 
   home.packages = with pkgs; [
     jetbrains.idea-community
+    nixpkgs-fmt
   ];
 
   home.file = {
     ".zshenv" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/home-manager/zsh/.zshenv";
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/home-manager/zsh/.zshenv";
     };
-     ".gradle/gradle.properties".text = ''
-       org.gradle.daemon.idletimeout=3600000
-     '';
+    ".gradle/gradle.properties".text = ''
+      org.gradle.daemon.idletimeout=3600000
+    '';
   };
 
-  home.sessionVariables = {
-  };
+  home.sessionVariables = { };
 
   services.gpg-agent = {
     enable = true;
@@ -31,30 +31,30 @@
     enableZshIntegration = true;
     grabKeyboardAndMouse = true;
     sshKeys = [
-        "BF3EDDD040FDF9435FD5F9B24577FB832C6B0E49" # source via `gpg --list-secret-keys --with-keygrip timj91@gmail.com`
+      "BF3EDDD040FDF9435FD5F9B24577FB832C6B0E49" # source via `gpg --list-secret-keys --with-keygrip timj91@gmail.com`
     ];
   };
 
   programs.firefox = {
     enable = true;
-    languagePacks = ["en-GB"];
+    languagePacks = [ "en-GB" ];
     profiles.timj = {
-        containers = {
-            personal = {
-               name = "Personal";
-               color = "blue";
-               icon = "fingerprint";
-               id = 1;
-            };
-            work = {
-                name = "Work";
-                color = "orange";
-                icon = "briefcase";
-                id = 2;
-            };
+      containers = {
+        personal = {
+          name = "Personal";
+          color = "blue";
+          icon = "fingerprint";
+          id = 1;
         };
-        containersForce = true;
-        # extensions = []; # todo worth revisiting to always bundle prefered password manager bitwarden
+        work = {
+          name = "Work";
+          color = "orange";
+          icon = "briefcase";
+          id = 2;
+        };
+      };
+      containersForce = true;
+      # extensions = []; # todo worth revisiting to always bundle prefered password manager bitwarden
     };
   };
 
