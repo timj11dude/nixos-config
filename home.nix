@@ -31,7 +31,7 @@
     enableZshIntegration = true;
     grabKeyboardAndMouse = true;
     sshKeys = [
-        "E47EDB26E9735B2ED80FBF11B440016A5D6130C0" # Personal
+        "BF3EDDD040FDF9435FD5F9B24577FB832C6B0E49" # source via `gpg --list-secret-keys --with-keygrip timj91@gmail.com`
     ];
   };
 
