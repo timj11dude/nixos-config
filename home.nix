@@ -9,6 +9,7 @@
   home.packages = with pkgs; [
     jetbrains.idea-community
     nixpkgs-fmt
+    btop
   ];
 
   home.file = {
@@ -57,6 +58,11 @@
       # extensions = []; # todo worth revisiting to always bundle prefered password manager bitwarden
     };
   };
+
+# todo needs a bit more careful consideration, will consume lots of disk space
+#  services.resilio = {
+#    enable = true;
+#  };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
