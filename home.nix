@@ -37,8 +37,24 @@
 
   programs.firefox = {
     enable = true;
+    languagePacks = ["en-GB"];
     profiles.timj = {
-
+        containers = {
+            personal = {
+               name = "Personal";
+               color = "blue";
+               icon = "fingerprint";
+               id = 1;
+            };
+            work = {
+                name = "Work";
+                color = "orange";
+                icon = "briefcase";
+                id = 2;
+            };
+        };
+        containersForce = true;
+        # extensions = []; # todo worth revisiting to always bundle prefered password manager bitwarden
     };
   };
 
