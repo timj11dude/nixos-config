@@ -1,0 +1,2 @@
+# Ignore files that ought not be every committed
+.idea/
