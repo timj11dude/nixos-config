@@ -19,7 +19,7 @@ User specific services I could have installed via nix instead of the system's de
 These should be anything I don't have need to be specifically configured.
 
 - [ ] Shell Editor - Vim
-- [ ] btop
+- [x] btop
 - [ ] IntelliJ
 - [ ] Obsidian
 
