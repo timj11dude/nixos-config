@@ -18,7 +18,6 @@ These should be anything I don't have need to be specifically configured.
 - [ ] Shell Editor - Vim
 - [ ] btop
 - [ ] IntelliJ
-- [ ] Firefox
 - [ ] Obsidian
 
 ### Packages + Configurations
@@ -29,10 +28,11 @@ Programs that I have personal configurations for.
 - [ ] SSH
 - [ ] ZSH
     - [ ] Aliases
+- [x] Firefox
 
 ### Services
 These will have to be internal services, ought not rely on having root privilages to start systemd level services
 
-- [ ] GPG Agent
+- [x] GPG Agent
 - [ ] Resilio Sync
 - ~~Docker~~ (Needs to be enabled at system level)
