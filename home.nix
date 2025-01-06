@@ -11,8 +11,8 @@
   ];
 
   home.file = {
-    ".zsh" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/.config/zsh/.zshenv";
+    ".zshenv" = {
+        source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/home-manager/zsh/.zshenv";
     };
      ".gradle/gradle.properties".text = ''
        org.gradle.daemon.idletimeout=3600000
