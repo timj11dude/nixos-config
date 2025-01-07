@@ -23,13 +23,52 @@
 
   home.sessionVariables = { };
 
+  programs.git = {
+    enable = true;
+    userName = "Timothy Jacobson";
+    userEmail = "tim@jaconet.uk";
+    aliases = {
+      st = "status";
+      ll = "log --decorate --graph";
+    };
+    attributes = [
+      "package-lock.json binary"
+      "yarn.lock binary"
+      "pnpm-lock.yaml binary"
+      "gradle.lockfile binary"
+    ];
+    signing = {
+      key = "5CCFF11F4D012DE2";
+      signByDefault = true;
+    };
+    extraConfig = {
+      format = {
+        pretty = "format:%C(auto,yellow)%h%C(auto,magenta)% G? %C(auto,blue)%>(12,trunc)%ad %C(auto,green)%<(7,trunc)%aN%C(auto,reset)%s%C(auto,red)% gD% D";
+      };
+      core = {
+        autocrlf = "input";
+        editor = "vim";
+        excludesfile = "${./git/excludesFile}";
+      };
+      diff = {
+        submodule = "log";
+      };
+      status = {
+        submoduleSummary = true;
+      };
+      init = {
+        defaultBranch = "main";
+      };
+    };
+  };
+
   programs.gpg = {
     enable = true;
     homedir = "${config.xdg.dataHome}/gnupg"; # instead of default ~/.gnupg
     settings = {
-        personal-digest-preferences = "SHA512 SHA384 SHA256 SHA224";
-        default-preference-list = "SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 BZIP2 ZLIB ZIP Uncompressed";
-        cert-digest-algo = "SHA512";
+      personal-digest-preferences = "SHA512 SHA384 SHA256 SHA224";
+      default-preference-list = "SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 BZIP2 ZLIB ZIP Uncompressed";
+      cert-digest-algo = "SHA512";
     };
   };
 
@@ -56,8 +95,8 @@
     serverAliveCountMax = 6;
     serverAliveInterval = 15;
     extraConfig = ''
-        Ciphers aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
-        TCPKeepAlive yes
+      Ciphers aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+      TCPKeepAlive yes
     '';
   };
 
