@@ -23,6 +23,16 @@
 
   home.sessionVariables = { };
 
+  programs.gpg = {
+    enable = true;
+    homedir = "${config.xdg.dataHome}/gnupg"; # instead of default ~/.gnupg
+    settings = {
+        personal-digest-preferences = "SHA512 SHA384 SHA256 SHA224";
+        default-preference-list = "SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 BZIP2 ZLIB ZIP Uncompressed";
+        cert-digest-algo = "SHA512";
+    };
+  };
+
   services.gpg-agent = {
     enable = true;
     enableExtraSocket = true;

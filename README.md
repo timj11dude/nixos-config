@@ -27,7 +27,7 @@ These should be anything I don't have need to be specifically configured.
 Programs that I have personal configurations for.
 
 - [ ] Shell - ZSH
-- [ ] GPG
+- [x] GPG
 - [x] SSH
 - [ ] ZSH
     - [ ] Aliases
