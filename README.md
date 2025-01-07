@@ -25,7 +25,7 @@ Programs that I have personal configurations for.
 
 - [ ] Shell - ZSH
 - [ ] GPG
-- [ ] SSH
+- [x] SSH
 - [ ] ZSH
     - [ ] Aliases
 - [x] Firefox
