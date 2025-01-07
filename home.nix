@@ -1,5 +1,4 @@
-{ config, pkgs, ... }:
-
+{ config, pkgs, lib, ... }:
 {
   home.username = "timj";
   home.homeDirectory = "/home/timj";
@@ -7,9 +6,10 @@
   home.stateVersion = "24.11"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
-    jetbrains.idea-community
+    jetbrains.idea-community # todo investigate best means to customize
     nixpkgs-fmt
     btop
+    obsidian
   ];
 
   home.file = {
@@ -66,4 +66,8 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+  # explicitly defined list of "unfree" packages to be allowed to be installed
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "obsidian"
+  ];
 }

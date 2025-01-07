@@ -20,8 +20,8 @@ These should be anything I don't have need to be specifically configured.
 
 - [ ] Shell Editor - Vim
 - [x] btop
-- [ ] IntelliJ
-- [ ] Obsidian
+- [x] IntelliJ
+- [x] Obsidian
 
 ### Packages + Configurations
 Programs that I have personal configurations for.
