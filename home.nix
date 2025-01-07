@@ -36,6 +36,21 @@
     ];
   };
 
+  programs.ssh = {
+    enable = true;
+    compression = true;
+    controlMaster = "auto";
+    controlPath = "/tmp/%u:%r@%h:%p";
+    controlPersist = "2m";
+    forwardAgent = true;
+    serverAliveCountMax = 6;
+    serverAliveInterval = 15;
+    extraConfig = ''
+        Ciphers aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+        TCPKeepAlive yes
+    '';
+  };
+
   programs.firefox = {
     enable = true;
     languagePacks = [ "en-GB" ];
@@ -59,10 +74,10 @@
     };
   };
 
-# todo needs a bit more careful consideration, will consume lots of disk space
-#  services.resilio = {
-#    enable = true;
-#  };
+  # todo needs a bit more careful consideration, will consume lots of disk space
+  #  services.resilio = {
+  #    enable = true;
+  #  };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
