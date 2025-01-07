@@ -23,6 +23,35 @@
 
   home.sessionVariables = { };
 
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    dotDir = ".config/zsh";
+    history = {
+      append = true;
+      extended = true;
+      path = "${config.xdg.dataHome}/zsh/zsh_history";
+      share = true;
+    };
+    oh-my-zsh = {
+      enable = true;
+      plugins = [
+        "git"
+        "docker"
+      ];
+      theme = "agnoster";
+    };
+    shellAliases = {
+      ls = "exa";
+      ll = "ls -la";
+      lll = "ls --long --grid --header --group --accessed --modified -Hla";
+      td = "cd $(mktemp -d)";
+      gw = "./gradlew";
+      # only really required whilst we have pacman
+      lsi = ''expac -H M "%011m	%-20n	%10d" $(comm -23 <(pacman -Qqen | sort) <({ pacman -Qqg xorg; expac -l n %E base; } | sort -u)) | sort -n'';
+    };
+  };
+
   programs.vim = {
     enable = true;
     defaultEditor = true;
@@ -74,6 +103,7 @@
       personal-digest-preferences = "SHA512 SHA384 SHA256 SHA224";
       default-preference-list = "SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 BZIP2 ZLIB ZIP Uncompressed";
       cert-digest-algo = "SHA512";
+      pinentry-mode = "loopback";
     };
   };
 
