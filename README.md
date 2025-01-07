@@ -22,16 +22,16 @@ These should be anything I don't have need to be specifically configured.
 - [x] btop
 - [x] IntelliJ
 - [x] Obsidian
+- [ ] Discord
 
 ### Packages + Configurations
 Programs that I have personal configurations for.
 
-- [ ] Shell - ZSH
+- [x] ZSH
+  - [x] Aliases
 - [x] git
 - [x] GPG
 - [x] SSH
-- [ ] ZSH
-    - [ ] Aliases
 - [x] Firefox
 
 ### Services
