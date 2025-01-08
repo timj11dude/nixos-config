@@ -23,12 +23,17 @@ These should be anything I don't have need to be specifically configured.
 - [x] IntelliJ
 - [x] Obsidian
 - [ ] Discord
+- [ ] Screen grabber / recorder
+- [ ] Steam/Lutris
+- [ ] VPN Unlimited
+- [ ] AWS CLI (maybe only for work specific deployment?) (may want to pre-configure too)
 
 ### Packages + Configurations
 Programs that I have personal configurations for.
 
 - [x] ZSH
   - [x] Aliases
+  - [ ] Custom Scripts (i.e. `get-lab`)
 - [x] git
 - [x] GPG
 - [x] SSH
@@ -38,5 +43,7 @@ Programs that I have personal configurations for.
 These will have to be internal services, ought not rely on having root privilages to start systemd level services
 
 - [x] GPG Agent
-- [ ] Resilio Sync
+- [ ] IPFS
+- [ ] Resilio Sync (consider Syncthing alternative)
+- [ ] Tailscale
 - ~~Docker~~ (Needs to be enabled at system level)
