@@ -36,10 +36,20 @@
 
   home.sessionVariables = { };
 
-  programs.alacritty = {
+  # terminal emulator
+  programs.ghostty = {
     enable = true;
-    package = config.lib.nixGL.wrap pkgs.alacritty;
+    package = config.lib.nixGL.wrap pkgs.ghostty;
+    enableZshIntegration = true;
+    settings = {
+      theme = "Dracula";
+      window-decoration = false; #hide the titlebar
+      font-family = "JetBrains Mono"; # probs need to make sure this available on any system
+      clipboard-paste-protection = true;
+
+    };
   };
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
