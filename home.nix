@@ -5,6 +5,12 @@
 
   home.stateVersion = "24.11"; # Please read the comment before changing.
 
+  # https://nix-community.github.io/home-manager/index.xhtml#sec-usage-gpu-non-nixos
+  nixGL.packages = import <nixgl> { inherit pkgs; };
+  nixGL.defaultWrapper = "mesa";
+  nixGL.offloadWrapper = "nvidiaPrime";
+  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
+
   home.packages = with pkgs; [
     jetbrains.idea-community # todo investigate best means to customize
     nixpkgs-fmt
@@ -13,20 +19,31 @@
   ];
 
   home.file = {
-    ".zshenv" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/home-manager/zsh/.zshenv";
-    };
+#    ".zshenv" = {
+#      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/home-manager/zsh/.zshenv";
+#    };
     ".gradle/gradle.properties".text = ''
       org.gradle.daemon.idletimeout=3600000
     '';
+    "${config.xdg.dataHome}/gnupg/pinentry.sh" = {
+        executable = true;
+        text = ''
+        #!/bin/sh
+        "${pkgs.jdk}/lib/openjdk/bin/java" -cp "${pkgs.jetbrains.idea-community}/idea-community/plugins/vcs-git/lib/git4idea-rt.jar:${pkgs.jetbrains.idea-community}/idea-community/lib/externalProcess-rt.jar" git4idea.gpg.PinentryApp
+        '';
+    };
   };
 
   home.sessionVariables = { };
 
+  programs.alacritty = {
+    enable = true;
+    package = config.lib.nixGL.wrap pkgs.alacritty;
+  };
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    dotDir = ".config/zsh";
+    dotDir = ".config/zsh"; # todo swap with "${config.xdg.configHome}/zsh"
     history = {
       append = true;
       extended = true;
@@ -98,23 +115,27 @@
 
   programs.gpg = {
     enable = true;
-    homedir = "${config.xdg.dataHome}/gnupg"; # instead of default ~/.gnupg
+    homedir = "${config.xdg.dataHome}/gnupg";
     settings = {
       personal-digest-preferences = "SHA512 SHA384 SHA256 SHA224";
       default-preference-list = "SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 BZIP2 ZLIB ZIP Uncompressed";
       cert-digest-algo = "SHA512";
       pinentry-mode = "loopback";
+      log-file = "${config.xdg.stateHome}/gnupg/log";
+      log-time = true;
     };
   };
 
+  # disable ssh-agent as we defer all key managmenet to gpg
+  services.ssh-agent.enable = false;
   services.gpg-agent = {
     enable = true;
-    enableExtraSocket = true;
     defaultCacheTtl = 1800;
-    maxCacheTtl = 7200;
     enableSshSupport = true;
     enableZshIntegration = true;
-    grabKeyboardAndMouse = true;
+    extraConfig = ''
+        allow-loopback-pinentry
+    '';
     sshKeys = [
       "BF3EDDD040FDF9435FD5F9B24577FB832C6B0E49" # source via `gpg --list-secret-keys --with-keygrip timj91@gmail.com`
     ];
@@ -125,8 +146,8 @@
     compression = true;
     controlMaster = "auto";
     controlPath = "/tmp/%u:%r@%h:%p";
-    controlPersist = "2m";
-    forwardAgent = true;
+    controlPersist = "120";
+    forwardAgent = false;
     serverAliveCountMax = 6;
     serverAliveInterval = 15;
     extraConfig = ''
