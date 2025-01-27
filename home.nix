@@ -144,7 +144,7 @@
     enableSshSupport = true;
     enableZshIntegration = true;
     extraConfig = ''
-        allow-loopback-pinentry
+      pinentry-program /usr/bin/pinentry-gtk
     '';
     sshKeys = [
       "BF3EDDD040FDF9435FD5F9B24577FB832C6B0E49" # source via `gpg --list-secret-keys --with-keygrip timj91@gmail.com`
