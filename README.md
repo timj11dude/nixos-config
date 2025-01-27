@@ -19,6 +19,7 @@ User specific services I could have installed via nix instead of the system's de
 These should be anything I don't have need to be specifically configured.
 
 - [x] Shell Editor - Vim
+- [ ] direnv
 - [x] btop
 - [x] IntelliJ
 - [x] Obsidian
@@ -31,9 +32,11 @@ These should be anything I don't have need to be specifically configured.
 ### Packages + Configurations
 Programs that I have personal configurations for.
 
+- [x] Ghostty (terminal emulator)
 - [x] ZSH
   - [x] Aliases
   - [ ] Custom Scripts (i.e. `get-lab`)
+  - [ ] Starship (custom prompt)
 - [x] git
 - [x] GPG
 - [x] SSH
