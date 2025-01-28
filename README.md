@@ -50,3 +50,8 @@ These will have to be internal services, ought not rely on having root privilage
 - [ ] Resilio Sync (consider Syncthing alternative)
 - [ ] Tailscale
 - ~~Docker~~ (Needs to be enabled at system level)
+
+## Additional Notes
+
+- I think I would prefer to return to LVM away from ZFS, and abstract away the HDD management from the quota and redundancy level configuration.
+  This time bring the whole system with me, and properly set up caching on LVM this time.
