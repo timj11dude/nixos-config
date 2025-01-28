@@ -8,7 +8,9 @@ A utility for adopting Nix onto an existing non-NixOS system.
 Provide functionality for being able to reproduce entire home user setup from a single source of truth.
 
 Combines the installation and management of any user request packages, with setup and configuration.
-Covering all types of programs 
+Covering all types of programs, configurations and user services.
+
+This project should be clone into `~/.config/home-manager`
 
 ## TODO
 Tracking what parts of my existing setup I would like to manage with `home-manager`,
