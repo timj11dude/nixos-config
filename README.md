@@ -58,3 +58,4 @@ These will have to be internal services, ought not rely on having root privilage
 - I think I would prefer to return to LVM away from ZFS, and abstract away the HDD management from the quota and redundancy level configuration.
   This time bring the whole system with me, and properly set up caching on LVM this time.
 - May want to add a local AI engine (i.e. ollama) to have a local/security over my data.
+- https://github.com/devoxx/DevoxxGenieIDEAPlugin
