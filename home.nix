@@ -19,24 +19,24 @@
   ];
 
   home.file = {
-#    ".zshenv" = {
-#      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/home-manager/zsh/.zshenv";
-#    };
+    #    ".zshenv" = {
+    #      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/home-manager/zsh/.zshenv";
+    #    };
     ".gradle/gradle.properties".text = ''
       org.gradle.daemon.idletimeout=3600000
       ssh.auth.sock=/run/user/1000/gnupg/S.gpg-agent.ssh
     '';
     "${config.xdg.dataHome}/gnupg/pinentry.sh" = {
-        executable = true;
-        text = ''
+      executable = true;
+      text = ''
         #!/bin/sh
         "${pkgs.jdk}/lib/openjdk/bin/java" -cp "${pkgs.jetbrains.idea-community}/idea-community/plugins/vcs-git/lib/git4idea-rt.jar:${pkgs.jetbrains.idea-community}/idea-community/lib/externalProcess-rt.jar" git4idea.gpg.PinentryApp
-        '';
+      '';
     };
   };
 
-  home.sessionVariables = { 
-    KUBECONFIG="${config.xdg.configHome}/kube/config";
+  home.sessionVariables = {
+    KUBECONFIG = "${config.xdg.configHome}/kube/config";
   };
 
   # terminal emulator
@@ -49,7 +49,6 @@
       window-decoration = false; #hide the titlebar
       font-family = "JetBrains Mono"; # probs need to make sure this available on any system
       clipboard-paste-protection = true;
-
     };
   };
 
@@ -92,9 +91,9 @@
     enable = true;
     defaultEditor = true;
     settings = {
-      backupdir = ["${config.xdg.stateHome}/vim" "~/" "/tmp"];
-      directory = ["${config.xdg.cacheHome}/vim" "~/" "/tmp"];
-      undodir =   ["${config.xdg.cacheHome}/vim" "~/" "/tmp"];
+      backupdir = [ "${config.xdg.stateHome}/vim" "~/" "/tmp" ];
+      directory = [ "${config.xdg.cacheHome}/vim" "~/" "/tmp" ];
+      undodir = [ "${config.xdg.cacheHome}/vim" "~/" "/tmp" ];
       undofile = true;
       number = true;
     };
