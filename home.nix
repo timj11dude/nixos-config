@@ -82,6 +82,12 @@
     };
   };
 
+  #todo need to add configuration to change audio driver used
+  programs.spotify-player = {
+    enable = true;
+    package = (pkgs.spotify-player.override { withAudioBackend = "pulseaudio"; });
+  };
+
   programs.vim = {
     enable = true;
     defaultEditor = true;
