@@ -24,6 +24,7 @@
 #    };
     ".gradle/gradle.properties".text = ''
       org.gradle.daemon.idletimeout=3600000
+      ssh.auth.sock=/run/user/1000/gnupg/S.gpg-agent.ssh
     '';
     "${config.xdg.dataHome}/gnupg/pinentry.sh" = {
         executable = true;
