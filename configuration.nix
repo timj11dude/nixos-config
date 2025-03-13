@@ -2,25 +2,46 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      <home-manager/nixos>
+#      "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
+#      ./disko.nix
     ];
-  
-  # As a guestOS  
-  services.qemuGuest.enable = true;
-  services.spice-vdagentd.enable = true;
+
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "nvidia-x11"
+    "nvidia-settings"
+    "steam"
+    "steam-original"
+    "steam-unwrapped"
+    "steam-run"
+  ];
 
   # Bootloader.
   boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/vda";
+  boot.loader.grub.device = "/dev/nvme0n1";
   boot.loader.grub.useOSProber = true;
 
-  networking.hostName = "Aether"; # Define your hostname.
-  #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  # Setup keyfile
+  boot.initrd.secrets = {
+    "/crypto_keyfile.bin" = null;
+  };
+
+  # Enable grub cryptodisk
+  boot.loader.grub.enableCryptodisk=true;
+
+  boot.initrd.luks.devices."luks-656c671e-512c-4197-a2a7-baf37cb036d6".keyFile = "/crypto_keyfile.bin";
+  # Enable swap on luks
+  boot.initrd.luks.devices."luks-a9e9b760-66db-429f-8911-eca0854a424c".device = "/dev/disk/by-uuid/a9e9b760-66db-429f-8911-eca0854a424c";
+  boot.initrd.luks.devices."luks-a9e9b760-66db-429f-8911-eca0854a424c".keyFile = "/crypto_keyfile.bin";
+
+  networking.hostName = "aether"; # Define your hostname.
+  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -47,97 +68,100 @@
     LC_TIME = "en_GB.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
   # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "gb";
-    variant = "";
+  services.xserver = {
+    enable = true;
+    xkb = {
+      layout = "gb";
+      variant = "";
+    };
+    windowManager.i3.enable = true;
+    videoDrivers = ["nvidia"];
+    xrandrHeads = [
+      {
+        output = "HDMI-0";
+        monitorConfig = ''
+          Option "LeftOf" "DP-4"
+        '';
+      }
+      "DP-4"
+      {
+        output = "DP-2";
+        monitorConfig = ''
+          Option "RightOf" "DP-4"
+          Option "Rotate" "right"
+        '';
+      }
+    ];
+  };
+  services.displayManager.defaultSession = "none+i3";
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "timj";
   };
 
   # Configure console keymap
   console.keyMap = "uk";
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
+  # Video
+  hardware.graphics = {
+    enable = true;
+  };
+  hardware.nvidia = {
+    modesetting.enable = true;
+    open = true;
+  };
 
-  # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+
+  # Audio https://nixos.wiki/wiki/PipeWire
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
-    alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  # home-manager configuration
+  home-manager = {
+    backupFileExtension = "bak";
+  };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  programs.zsh.enable = true;
   users.users.timj = {
     isNormalUser = true;
     description = "Timothy Jacobson";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-    #  thunderbird
-    ];
+    shell = pkgs.zsh;
+    extraGroups = [ "networkmanager" "wheel" "audio" ];
+#    packages = with pkgs; [ ];
   };
+  home-manager.users.timj = /home/timj/repos/github/timj11dude/nixos-config/home.nix;
 
-  # Install firefox.
-  programs.firefox.enable = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
-     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-     jetbrains.idea-community
+    vim
+    git
   ];
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  programs.gnupg.agent = {
+  programs.steam = {
     enable = true;
-    enableSSHSupport = true;
+    localNetworkGameTransfers.openFirewall = true;
   };
-  programs.git = {
-    enable = true;
-
-    config = {
-      init = { defaultBranch = "main"; };
-      core.excludesFile = "${./git/excludesFile}";
-    };
-  };
-
-  # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  nix.gc = {
-    automatic = true;
-    dates = "03:15";
-    options = ""; # use -d for more extensive clearing
+  # Open ports in the firewall. TODO debug this isn't working:
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 24800 ];
+    allowedUDPPortRanges = [
+      { from = 24800; to = 24800; }
+    ];
   };
 
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
