@@ -6,16 +6,19 @@
   home.stateVersion = "24.11"; # Please read the comment before changing.
 
   # https://nix-community.github.io/home-manager/index.xhtml#sec-usage-gpu-non-nixos
-  nixGL.packages = import <nixgl> { inherit pkgs; };
-  nixGL.defaultWrapper = "mesa";
-  nixGL.offloadWrapper = "nvidiaPrime";
-  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
+#  nixGL.packages = import <nixgl> { inherit pkgs; };
+#  nixGL.defaultWrapper = "mesa";
+#  nixGL.offloadWrapper = "nvidiaPrime";
+#  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
 
   home.packages = with pkgs; [
     jetbrains.idea-community # todo investigate best means to customize
     nixpkgs-fmt
     btop
     obsidian
+    discord
+    barrier
+    eza
   ];
 
   home.file = {
@@ -33,6 +36,12 @@
         "${pkgs.jdk}/lib/openjdk/bin/java" -cp "${pkgs.jetbrains.idea-community}/idea-community/plugins/vcs-git/lib/git4idea-rt.jar:${pkgs.jetbrains.idea-community}/idea-community/lib/externalProcess-rt.jar" git4idea.gpg.PinentryApp
       '';
     };
+    # ".config/i3/config" = {
+    #   source = ./i3/i3_config;
+    # };
+    ".config/i3status/config" = {
+      source = ./i3/i3status_config;
+    };
   };
 
   home.sessionVariables = {
@@ -42,7 +51,7 @@
   # terminal emulator
   programs.ghostty = {
     enable = true;
-    package = config.lib.nixGL.wrap pkgs.ghostty;
+#    package = config.lib.nixGL.wrap pkgs.ghostty;
     enableZshIntegration = true;
     settings = {
       theme = "Dracula";
@@ -84,7 +93,7 @@
   #todo need to add configuration to change audio driver used
   programs.spotify-player = {
     enable = true;
-    package = (pkgs.spotify-player.override { withAudioBackend = "pulseaudio"; });
+#    package = (pkgs.spotify-player.override { withAudioBackend = "pulseaudio"; });
   };
 
   programs.vim = {
@@ -162,7 +171,7 @@
     enableSshSupport = true;
     enableZshIntegration = true;
     extraConfig = ''
-      pinentry-program /usr/bin/pinentry-gtk
+      pinentry-program ${pkgs.pinentry-qt}/bin/pinentry-qt
     '';
     sshKeys = [
       "BF3EDDD040FDF9435FD5F9B24577FB832C6B0E49" # source via `gpg --list-secret-keys --with-keygrip timj91@gmail.com`
@@ -218,5 +227,7 @@
   # explicitly defined list of "unfree" packages to be allowed to be installed
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "obsidian"
+    "discord"
   ];
 }
+
