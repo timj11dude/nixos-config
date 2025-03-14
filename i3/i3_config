@@ -22,9 +22,9 @@ font xft:URWGothic-Book 11
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec terminal
+bindsym $mod+Return exec ghostty
 #bindsym $mod+Shift+Return exec --no-startup-id terminal -geometry 150x40 -name "floating_term"
-bindsym $mod+Shift+Return exec --no-startup-id terminal --window-width=150 --window-height=40 --title="floating_term"
+bindsym $mod+Shift+Return exec --no-startup-id ghostty --window-width=150 --window-height=40 --title="floating_term"
 for_window [title=floating_term] floating toggle
 
 # kill focused window

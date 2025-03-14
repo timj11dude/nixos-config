@@ -36,13 +36,14 @@
         "${pkgs.jdk}/lib/openjdk/bin/java" -cp "${pkgs.jetbrains.idea-community}/idea-community/plugins/vcs-git/lib/git4idea-rt.jar:${pkgs.jetbrains.idea-community}/idea-community/lib/externalProcess-rt.jar" git4idea.gpg.PinentryApp
       '';
     };
-    # ".config/i3/config" = {
-    #   source = ./i3/i3_config;
-    # };
-    ".config/i3status/config" = {
-      source = ./i3/i3status_config;
-    };
+    ".config/i3/config".source = ./i3/i3_config;
+    ".config/i3status/config".source = ./i3/i3status_config;
   };
+
+  # TODO this isn't applied https://github.com/nix-community/home-manager/issues/3417
+  home.sessionPath = [
+    "$HOME/.local/bin"
+  ];
 
   home.sessionVariables = {
     KUBECONFIG = "${config.xdg.configHome}/kube/config";
