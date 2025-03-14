@@ -19,6 +19,7 @@
     discord
     barrier
     eza
+    rofi
   ];
 
   home.file = {
