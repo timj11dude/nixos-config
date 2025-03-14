@@ -77,7 +77,7 @@
     };
     windowManager.i3.enable = true;
     videoDrivers = ["nvidia"];
-    xrandrHeads = [
+    xrandrHeads = [ # this unfortuantly is very output order specific
       {
         output = "HDMI-0";
         monitorConfig = ''
@@ -86,7 +86,7 @@
       }
       "DP-4"
       {
-        output = "DP-2";
+        output = "DP-0";
         monitorConfig = ''
           Option "RightOf" "DP-4"
           Option "Rotate" "right"
