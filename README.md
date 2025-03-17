@@ -25,9 +25,9 @@ These should be anything I don't have need to be specifically configured.
 - [x] btop
 - [x] IntelliJ
 - [x] Obsidian
-- [ ] Discord
+- [x] Discord
 - [ ] Screen grabber / recorder
-- [ ] Steam/Lutris
+- [x] Steam/Lutris
 - [ ] VPN Unlimited
 - [ ] AWS CLI (maybe only for work specific deployment?) (may want to pre-configure too)
 
