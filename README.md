@@ -28,6 +28,8 @@ These should be anything I don't have need to be specifically configured.
 - [x] Discord
 - [ ] Screen grabber / recorder
 - [x] Steam/Lutris
+  - [x] multimc
+    - [ ] configure the install location under .local/share
 - [ ] VPN Unlimited
 - [ ] AWS CLI (maybe only for work specific deployment?) (may want to pre-configure too)
 
