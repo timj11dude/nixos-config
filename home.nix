@@ -20,6 +20,9 @@
     barrier
     eza
     rofi
+    xclip
+    maim
+    xdotool
     (lutris-free.override {
       extraLibraries = pkgs: [
         qt5.full
