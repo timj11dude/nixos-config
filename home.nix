@@ -20,6 +20,14 @@
     barrier
     eza
     rofi
+    (lutris-free.override {
+      extraLibraries = pkgs: [
+        qt5.full
+      ];
+      extraPkgs = pkgs: [
+        jdk
+      ];
+    })
   ];
 
   home.file = {
