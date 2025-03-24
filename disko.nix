@@ -113,7 +113,7 @@
         type = "lvm_vg";
         lvs = {
           root = {
-            size = "100G";
+            size = "100%";
             content = {
               type = "filesystem";
               format = "ext4";
@@ -134,14 +134,6 @@
               ];
             };
           };
-          home = {
-            size = "100%";
-            content = {
-              type = "filesystem";
-              format = "ext4";
-              mountpoint = "/home";
-            };
-          };
           swap = {
             size = "64G";
             content = {
@@ -154,3 +146,4 @@
     };
   };
 }
+
