@@ -35,7 +35,8 @@ for_window [title=floating_term] floating toggle
 bindsym $mod+Shift+q kill
 
 # start program launcher
-bindsym $mod+d exec --no-startup-id "rofi -modi drun,run -show drun"
+bindsym $mod+d exec --no-startup-id "rofi -show drun"
+bindsym $mod+c exec --no-startup-id "rofi -modi calc -show calc -no-show-match -no-sort > /dev/null"
 
 # launch categorized menu
 bindsym $mod+z exec --no-startup-id morc_menu

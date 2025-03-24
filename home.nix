@@ -19,10 +19,10 @@
     discord
     barrier
     eza
-    rofi
     xclip
     maim
     xdotool
+    qalculate-qt
     (lutris-free.override {
       extraLibraries = pkgs: [
         qt5.full
@@ -59,6 +59,18 @@
 
   home.sessionVariables = {
     KUBECONFIG = "${config.xdg.configHome}/kube/config";
+    TERMINAL = "ghostty";
+  };
+
+  programs.rofi = {
+    enable = true;
+    extraConfig = {
+      modi = "drun,emoji,ssh";
+    };
+    plugins = with pkgs; [
+      rofi-emoji
+      rofi-calc
+    ];
   };
 
   # terminal emulator

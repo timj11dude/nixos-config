@@ -40,11 +40,15 @@ Programs that I have personal configurations for.
 - [x] ZSH
   - [x] Aliases
   - [ ] Custom Scripts (i.e. `get-lab`)
+  - [x] rofi
+    - [x] rofi-emoji
+    - [x] rofi-calc
   - [ ] Starship (custom prompt)
 - [x] git
 - [x] GPG
 - [x] SSH
 - [x] Firefox
+- [ ] i3 power management (migrate from manjaro script)
 
 ### Services
 These will have to be internal services, ought not rely on having root privilages to start systemd level services
