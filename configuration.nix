@@ -2,25 +2,32 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      <home-manager/nixos>
-#      "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
-#      ./disko.nix
-    ];
-
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "nvidia-x11"
-    "nvidia-settings"
-    "steam"
-    "steam-original"
-    "steam-unwrapped"
-    "steam-run"
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    <home-manager/nixos>
+    #      "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
+    #      ./disko.nix
   ];
+
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (lib.getName pkg) [
+      "nvidia-x11"
+      "nvidia-settings"
+      "steam"
+      "steam-original"
+      "steam-unwrapped"
+      "steam-run"
+    ];
 
   # Bootloader.
   boot.loader.grub.enable = true;
@@ -33,12 +40,15 @@
   };
 
   # Enable grub cryptodisk
-  boot.loader.grub.enableCryptodisk=true;
+  boot.loader.grub.enableCryptodisk = true;
 
-  boot.initrd.luks.devices."luks-656c671e-512c-4197-a2a7-baf37cb036d6".keyFile = "/crypto_keyfile.bin";
+  boot.initrd.luks.devices."luks-656c671e-512c-4197-a2a7-baf37cb036d6".keyFile =
+    "/crypto_keyfile.bin";
   # Enable swap on luks
-  boot.initrd.luks.devices."luks-a9e9b760-66db-429f-8911-eca0854a424c".device = "/dev/disk/by-uuid/a9e9b760-66db-429f-8911-eca0854a424c";
-  boot.initrd.luks.devices."luks-a9e9b760-66db-429f-8911-eca0854a424c".keyFile = "/crypto_keyfile.bin";
+  boot.initrd.luks.devices."luks-a9e9b760-66db-429f-8911-eca0854a424c".device =
+    "/dev/disk/by-uuid/a9e9b760-66db-429f-8911-eca0854a424c";
+  boot.initrd.luks.devices."luks-a9e9b760-66db-429f-8911-eca0854a424c".keyFile =
+    "/crypto_keyfile.bin";
 
   networking.hostName = "aether"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -76,8 +86,9 @@
       variant = "";
     };
     windowManager.i3.enable = true;
-    videoDrivers = ["nvidia"];
-    xrandrHeads = [ # this unfortuantly is very output order specific
+    videoDrivers = [ "nvidia" ];
+    xrandrHeads = [
+      # this unfortuantly is very output order specific
       {
         output = "HDMI-0";
         monitorConfig = ''
@@ -112,7 +123,6 @@
     open = true;
   };
 
-
   # Audio https://nixos.wiki/wiki/PipeWire
   security.rtkit.enable = true;
   services.pipewire = {
@@ -131,8 +141,12 @@
     isNormalUser = true;
     description = "Timothy Jacobson";
     shell = pkgs.zsh;
-    extraGroups = [ "networkmanager" "wheel" "audio" ];
-#    packages = with pkgs; [ ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "audio"
+    ];
+    #    packages = with pkgs; [ ];
   };
   home-manager.users.timj = /home/timj/repos/github/timj11dude/nixos-config/home.nix;
 
@@ -154,7 +168,10 @@
     enable = true;
     allowedTCPPorts = [ 24800 ];
     allowedUDPPortRanges = [
-      { from = 24800; to = 24800; }
+      {
+        from = 24800;
+        to = 24800;
+      }
     ];
   };
 

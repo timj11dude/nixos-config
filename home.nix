@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   home.username = "timj";
   home.homeDirectory = "/home/timj";
@@ -6,10 +11,10 @@
   home.stateVersion = "24.11"; # Please read the comment before changing.
 
   # https://nix-community.github.io/home-manager/index.xhtml#sec-usage-gpu-non-nixos
-#  nixGL.packages = import <nixgl> { inherit pkgs; };
-#  nixGL.defaultWrapper = "mesa";
-#  nixGL.offloadWrapper = "nvidiaPrime";
-#  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
+  #  nixGL.packages = import <nixgl> { inherit pkgs; };
+  #  nixGL.defaultWrapper = "mesa";
+  #  nixGL.offloadWrapper = "nvidiaPrime";
+  #  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
 
   home.packages = with pkgs; [
     jetbrains.idea-community # todo investigate best means to customize
@@ -33,6 +38,8 @@
     })
   ];
 
+  home.preferXdgDirectories = true;
+
   home.file = {
     #    ".zshenv" = {
     #      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/home-manager/zsh/.zshenv";
@@ -53,9 +60,7 @@
   };
 
   # TODO this isn't applied https://github.com/nix-community/home-manager/issues/3417
-  home.sessionPath = [
-    "$HOME/.local/bin"
-  ];
+  home.sessionPath = [ "$HOME/.local/bin" ];
 
   home.sessionVariables = {
     KUBECONFIG = "${config.xdg.configHome}/kube/config";
@@ -76,11 +81,11 @@
   # terminal emulator
   programs.ghostty = {
     enable = true;
-#    package = config.lib.nixGL.wrap pkgs.ghostty;
+    #    package = config.lib.nixGL.wrap pkgs.ghostty;
     enableZshIntegration = true;
     settings = {
       theme = "Dracula";
-      window-decoration = false; #hide the titlebar
+      window-decoration = false; # hide the titlebar
       font-family = "JetBrains Mono"; # probs need to make sure this available on any system
       clipboard-paste-protection = true;
     };
@@ -118,16 +123,28 @@
   #todo need to add configuration to change audio driver used
   programs.spotify-player = {
     enable = true;
-#    package = (pkgs.spotify-player.override { withAudioBackend = "pulseaudio"; });
+    #    package = (pkgs.spotify-player.override { withAudioBackend = "pulseaudio"; });
   };
 
   programs.vim = {
     enable = true;
     defaultEditor = true;
     settings = {
-      backupdir = [ "${config.xdg.stateHome}/vim" "~/" "/tmp" ];
-      directory = [ "${config.xdg.cacheHome}/vim" "~/" "/tmp" ];
-      undodir = [ "${config.xdg.cacheHome}/vim" "~/" "/tmp" ];
+      backupdir = [
+        "${config.xdg.stateHome}/vim"
+        "~/"
+        "/tmp"
+      ];
+      directory = [
+        "${config.xdg.cacheHome}/vim"
+        "~/"
+        "/tmp"
+      ];
+      undodir = [
+        "${config.xdg.cacheHome}/vim"
+        "~/"
+        "/tmp"
+      ];
       undofile = true;
       number = true;
     };
@@ -250,9 +267,10 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
   # explicitly defined list of "unfree" packages to be allowed to be installed
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "obsidian"
-    "discord"
-  ];
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (lib.getName pkg) [
+      "obsidian"
+      "discord"
+    ];
 }
-
