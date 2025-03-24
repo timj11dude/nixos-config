@@ -31,6 +31,12 @@
     "/crypto_keyfile.bin" = null;
   };
 
+  # clear up 10GB space when less than 1GB left
+  nix.extraOptions = ''
+    min-free = ${toString (1 * 1024 * 1024 * 1024)}
+    max-free = ${toString (10 * 1024 * 1024 * 1024)}
+  '';
+
   networking.hostName = "aether"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
