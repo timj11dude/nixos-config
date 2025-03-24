@@ -14,8 +14,8 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     <home-manager/nixos>
-    #      "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
-    #      ./disko.nix
+    "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
+    ./disko.nix
   ];
 
   nixpkgs.config.allowUnfreePredicate =
@@ -30,25 +30,19 @@
     ];
 
   # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/nvme0n1";
-  boot.loader.grub.useOSProber = true;
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   # Setup keyfile
   boot.initrd.secrets = {
     "/crypto_keyfile.bin" = null;
   };
 
-  # Enable grub cryptodisk
-  boot.loader.grub.enableCryptodisk = true;
-
-  boot.initrd.luks.devices."luks-656c671e-512c-4197-a2a7-baf37cb036d6".keyFile =
-    "/crypto_keyfile.bin";
-  # Enable swap on luks
-  boot.initrd.luks.devices."luks-a9e9b760-66db-429f-8911-eca0854a424c".device =
-    "/dev/disk/by-uuid/a9e9b760-66db-429f-8911-eca0854a424c";
-  boot.initrd.luks.devices."luks-a9e9b760-66db-429f-8911-eca0854a424c".keyFile =
-    "/crypto_keyfile.bin";
+  # clear up 10GB space when less than 1GB left
+  nix.extraOptions = ''
+    min-free = ${toString (1 * 1024 * 1024 * 1024)}
+    max-free = ${toString (10 * 1024 * 1024 * 1024)}
+  '';
 
   networking.hostName = "aether"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
