@@ -23,6 +23,10 @@
     builtins.elem (lib.getName pkg) [
       "nvidia-x11"
       "nvidia-settings"
+      "cuda_cudart"
+      "libcublas"
+      "cuda_cccl"
+      "cuda_nvcc"
       "steam"
       "steam-original"
       "steam-unwrapped"
@@ -167,6 +171,12 @@
         to = 24800;
       }
     ];
+  };
+
+  nixpkgs.config.cudaSupport = true;
+  services.ollama = {
+    enable = true;
+    models = "/mnt/corsair_1tb/ollama";
   };
 
   # This value determines the NixOS release from which the default
