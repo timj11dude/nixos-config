@@ -19,7 +19,6 @@
   home.packages = with pkgs; [
     jetbrains.idea-community # todo investigate best means to customize
     nixpkgs-fmt
-    btop
     obsidian
     discord
     barrier
@@ -117,6 +116,13 @@
       gw = "./gradlew";
       # only really required whilst we have pacman
       lsi = ''expac -H M "%011m	%-20n	%10d" $(comm -23 <(pacman -Qqen | sort) <({ pacman -Qqg xorg; expac -l n %E base; } | sort -u)) | sort -n'';
+    };
+  };
+
+  programs.btop = {
+    enable = true;
+    package = pkgs.btop.override {
+      cudaSupport = true;
     };
   };
 
