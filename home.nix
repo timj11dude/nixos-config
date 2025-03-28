@@ -27,6 +27,7 @@
     maim
     xdotool
     qalculate-qt
+    nixfmt-rfc-style
     (lutris-free.override {
       extraLibraries = pkgs: [
         qt5.full
