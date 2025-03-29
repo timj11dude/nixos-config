@@ -3,7 +3,7 @@
     disk = {
       nvme_samsung_1 = {
         type = "disk";
-        device = /dev/disk/by-id/nvme-SAMSUNG_MZVPV128HDGM-00000_S1XVNYAH209846;
+        device = "/dev/disk/by-id/nvme-SAMSUNG_MZVPV128HDGM-00000_S1XVNYAH209846";
         content = {
           type = "gpt";
           partitions = {
@@ -29,7 +29,7 @@
       };
       nvme_ct_1 = {
         type = "disk";
-        device = /dev/disk/by-id/nvme-CT1000T700SSD5_2340E87B52FA;
+        device = "/dev/disk/by-id/nvme-CT1000T700SSD5_2340E87B52FA";
         content = {
           type = "gpt";
           partitions = {
@@ -45,7 +45,7 @@
       };
       ssd_samsung_1 = {
         type = "disk";
-        device = /dev/disk/by-id/ata-Samsung_SSD_850_EVO_250GB_S21PNSBG411051L;
+        device = "/dev/disk/by-id/ata-Samsung_SSD_850_EVO_250GB_S21PNSBG411051L";
         content = {
           type = "gpt";
           partitions = {
@@ -61,7 +61,7 @@
       };
       ssd_samsung_2 = {
         type = "disk";
-        device = /dev/disk/by-id/ata-Samsung_SSD_870_QVO_1TB_S5SVNF0NB77522E;
+        device = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_1TB_S5SVNF0NB77522E";
         content = {
           type = "gpt";
           partitions = {
@@ -77,7 +77,7 @@
       };
       hdd_wdc_1 = {
         type = "disk";
-        device = /dev/disk/by-id/ata-WDC_WD20EZAZ-00GGJB0_WD-WXA1AC8J27Y5;
+        device = "/dev/disk/by-id/ata-WDC_WD20EZAZ-00GGJB0_WD-WXA1AC8J27Y5";
         content = {
           type = "gpt";
           partitions = {
@@ -93,7 +93,7 @@
       };
       hdd_st_1 = {
         type = "disk";
-        device = /dev/disk/by-id/ata-ST2000DL003-9VT166_5YD14T19;
+        device = "/dev/disk/by-id/ata-ST2000DL003-9VT166_5YD14T19";
         content = {
           type = "gpt";
           partitions = {
@@ -138,7 +138,6 @@
             size = "64G";
             content = {
               type = "swap";
-              mountpoint = "/swap";
             };
           };
         };

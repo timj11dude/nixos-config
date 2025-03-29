@@ -37,11 +37,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Setup keyfile
-  boot.initrd.secrets = {
-    "/crypto_keyfile.bin" = null;
-  };
-
   # clear up 10GB space when less than 1GB left
   nix.extraOptions = ''
     min-free = ${toString (1 * 1024 * 1024 * 1024)}
@@ -105,7 +100,7 @@
   };
   services.displayManager.defaultSession = "none+i3";
   services.displayManager.autoLogin = {
-    enable = true;
+    enable = false; #todo make dynamic on LUKS
     user = "timj";
   };
 
@@ -146,7 +141,7 @@
     ];
     #    packages = with pkgs; [ ];
   };
-  home-manager.users.timj = /home/timj/repos/github/timj11dude/nixos-config/home.nix;
+  home-manager.users.timj = ./home.nix;
 
   environment.systemPackages = with pkgs; [
     vim
