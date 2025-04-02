@@ -1,3 +1,3 @@
-# Ignore files that ought not to be committed
+# Ignore files that ought not be every committed
 .idea/
 *.swp
