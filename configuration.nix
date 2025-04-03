@@ -168,10 +168,13 @@
     ];
   };
 
-  nixpkgs.config.cudaSupport = true;
-  services.ollama = {
+  #nixpkgs.config.cudaSupport = true;
+  services.ollama = let
+    unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+  in {
     enable = true;
-    models = "/mnt/corsair_1tb/ollama";
+    acceleration = "cuda";
+    package = unstable.ollama;
   };
 
   # This value determines the NixOS release from which the default
