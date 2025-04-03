@@ -67,6 +67,11 @@
     TERMINAL = "ghostty";
   };
 
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
   programs.rofi = {
     enable = true;
     extraConfig = {
