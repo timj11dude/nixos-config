@@ -36,6 +36,7 @@
         jdk
       ];
     })
+    davinci-resolve
   ];
 
   home.preferXdgDirectories = true;
@@ -295,5 +296,6 @@
     builtins.elem (lib.getName pkg) [
       "obsidian"
       "discord"
+      "davinci-resolve"
     ];
 }
