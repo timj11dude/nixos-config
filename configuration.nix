@@ -16,7 +16,19 @@
     <home-manager/nixos>
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     ./disko.nix
+    "${builtins.fetchTarball {
+      url = "https://github.com/Mic92/sops-nix/archive/cff8437c5fe8c68fc3a840a21bf1f4dc801da40d.tar.gz";
+      # replace this with an actual hash
+      sha256 = "1ddxjbwlygzcylvmj1vbgwv2hl0vwh911wsxk21qmwmlhq8pbgfr";
+    }}/modules/sops"
   ];
+
+  sops.defaultSopsFile = ./secrets/secrets.yaml;
+  sops.defaultSopsFormat = "yaml";
+
+  sops.age.keyFile = "/home/timj/.config/sops/age/keys.txt"; # todo move this somewhere secured. circular dependency here
+
+  sops.secrets."truenas/login" = {};
 
   nixpkgs.config.allowUnfreePredicate =
     pkg:
