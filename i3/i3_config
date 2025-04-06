@@ -22,8 +22,8 @@ font xft:URWGothic-Book 11
 floating_modifier $mod
 
 # screenshot
-bindsym Print exec NOW=$(date +%d-%b-%Y_%H-%M-%S) && maim --format png --select > ~/screenshots/screenshot_$NOW.png && xclip -selection clip -t image/png ~/screenshots/screenshot_$NOW.png
-bindsym $mod+Print exec NOW=$(date +%d-%b-%Y_%H-%M-%S) && maim --format png -i $(xdotool getactivewindow) > ~/screenshots/screenshot_$NOW.png && xclip -selection clip -t image/png ~/screenshots/screenshot_$NOW.png
+bindsym Print exec NOW=$(date +%d-%b-%Y_%H-%M-%S) && maim --format png --select --noopengl > ~/screenshots/screenshot_$NOW.png && xclip -selection clip -t image/png ~/screenshots/screenshot_$NOW.png
+bindsym $mod+Print exec NOW=$(date +%d-%b-%Y_%H-%M-%S) && maim --format png -i $(xdotool getactivewindow) --noopengl > ~/screenshots/screenshot_$NOW.png && xclip -selection clip -t image/png ~/screenshots/screenshot_$NOW.png
 
 # start a terminal
 bindsym $mod+Return exec ghostty

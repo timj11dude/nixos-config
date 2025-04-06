@@ -21,12 +21,12 @@ User specific services I could have installed via nix instead of the system's de
 These should be anything I don't have need to be specifically configured.
 
 - [x] Shell Editor - Vim
-- [ ] direnv
+- [x] direnv
 - [x] btop
 - [x] IntelliJ
 - [x] Obsidian
 - [x] Discord
-- [ ] Screen grabber / recorder
+- [x] Screen grabber / recorder (added to printscreen keypress)
 - [x] Steam/Lutris
   - [x] multimc
     - [ ] configure the install location under .local/share
@@ -44,6 +44,8 @@ Programs that I have personal configurations for.
     - [x] rofi-emoji
     - [x] rofi-calc
   - [ ] Starship (custom prompt)
+  - [x] eza (aka exa)
+  - [ ] mc
 - [x] git
 - [x] GPG
 - [x] SSH

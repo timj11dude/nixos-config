@@ -117,7 +117,7 @@
       theme = "agnoster";
     };
     shellAliases = {
-      ls = "exa";
+      ls = "exa --icons";
       ll = "ls -la";
       lll = "ls --long --grid --header --group --accessed --modified -Hla";
       td = "cd $(mktemp -d)";
