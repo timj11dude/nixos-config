@@ -23,6 +23,7 @@
     discord
     barrier
     eza
+    tree
     xclip
     maim
     xdotool
@@ -124,6 +125,25 @@
       # only really required whilst we have pacman
       lsi = ''expac -H M "%011m	%-20n	%10d" $(comm -23 <(pacman -Qqen | sort) <({ pacman -Qqg xorg; expac -l n %E base; } | sort -u)) | sort -n'';
     };
+  };
+
+  programs.fd = {
+    enable = true;
+    ignores = [
+      ".git/"
+      "*.bak"
+    ];
+  };
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+    defaultCommand = "fd --type f"; # fzf
+    defaultOptions = [ "--preview 'head {}'" ];
+    changeDirWidgetCommand = "fd --type d"; # Alt-C
+    changeDirWidgetOptions = [ "--preview 'tree -C {} | head -200'"];
+    fileWidgetCommand = "fd --type f"; # Ctl-T
+    fileWidgetOptions = [ "--preview 'head {}'" ];
+    historyWidgetOptions = [ "--exact" ]; # Alt-R
   };
 
   programs.btop = {
