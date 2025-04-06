@@ -23,7 +23,6 @@
     discord
     barrier
     eza
-    tree
     xclip
     maim
     xdotool
@@ -120,6 +119,7 @@
       ls = "exa --icons";
       ll = "ls -la";
       lll = "ls --long --grid --header --group --accessed --modified -Hla";
+      tree = "ls --tree";
       td = "cd $(mktemp -d)";
       gw = "./gradlew";
       # only really required whilst we have pacman
@@ -131,6 +131,22 @@
     enable = true;
     enableZshIntegration = true;
     settings = {
+      add_newline = false;
+      character.success_symbol = ''[➡](bold green)'';
+      direnv = {
+        disabled = false;
+        symbol = "📂 ";
+        allowed_msg = "🟢";
+        not_allowed_msg = "🔴";
+        denied_msg = "⛔";
+        loaded_msg = "✅";
+        unloaded_msg = "🟨";
+      };
+      gradle = {
+        symbol = "🐘 ";
+      };
+      java.disabled = true;
+      kotlin.disabled = true;
     };
   };
 
@@ -147,7 +163,7 @@
     defaultCommand = "fd --type f"; # fzf
     defaultOptions = [ "--preview 'head {}'" ];
     changeDirWidgetCommand = "fd --type d"; # Alt-C
-    changeDirWidgetOptions = [ "--preview 'tree -C {} | head -200'"];
+    changeDirWidgetOptions = [ "--preview 'exa --tree {} | head -200'"];
     fileWidgetCommand = "fd --type f"; # Ctl-T
     fileWidgetOptions = [ "--preview 'head {}'" ];
     historyWidgetOptions = [ "--exact" ]; # Alt-R
