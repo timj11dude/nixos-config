@@ -127,6 +127,13 @@
     };
   };
 
+  programs.starship = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = {
+    };
+  };
+
   programs.fd = {
     enable = true;
     ignores = [
