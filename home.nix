@@ -66,6 +66,7 @@
   home.sessionVariables = {
     KUBECONFIG = "${config.xdg.configHome}/kube/config";
     TERMINAL = "ghostty";
+    SHELL = "${pkgs.zsh}";
   };
 
   programs.direnv = {
@@ -96,7 +97,7 @@
       clipboard-paste-protection = true;
     };
   };
-
+  programs.bash.enable = false;
   programs.zsh = {
     enable = true;
     enableCompletion = true;
