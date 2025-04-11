@@ -161,13 +161,13 @@
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
-    defaultCommand = "fd --type f"; # fzf
+#    defaultCommand = "fd --type f"; # fzf
     defaultOptions = [ "--preview 'head {}'" ];
-    changeDirWidgetCommand = "fd --type d"; # Alt-C
+#    changeDirWidgetCommand = "fd --type d"; # Alt-C
     changeDirWidgetOptions = [ "--preview 'exa --tree {} | head -200'"];
-    fileWidgetCommand = "fd --type f"; # Ctl-T
+#    fileWidgetCommand = "fd --type f"; # Ctl-T
     fileWidgetOptions = [ "--preview 'head {}'" ];
-    historyWidgetOptions = [ "--exact" ]; # Alt-R
+    historyWidgetOptions = [ "--exact" ]; # Ctl-R
   };
 
   programs.btop = {
