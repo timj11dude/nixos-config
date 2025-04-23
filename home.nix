@@ -66,7 +66,6 @@
   home.sessionVariables = {
     KUBECONFIG = "${config.xdg.configHome}/kube/config";
     TERMINAL = "ghostty";
-    SHELL = "${pkgs.zsh}";
   };
 
   programs.direnv = {
