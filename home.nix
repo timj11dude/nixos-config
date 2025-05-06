@@ -4,7 +4,9 @@
   lib,
   ...
 }:
-{
+let
+  unstablePkgs = import <nixos-unstable> { inherit pkgs; };
+in {
   home.username = "timj";
   home.homeDirectory = "/home/timj";
 
@@ -246,6 +248,16 @@
       init = {
         defaultBranch = "main";
       };
+    };
+  };
+
+  programs.jujutsu = {
+    enable = true;
+    package = unstablePkgs.jujutsu;
+    settings = {
+        user.name = "Timothy Jacobson";
+        user.email = "tim@jaconet.uk";
+        ui.default-command = "log";
     };
   };
 
