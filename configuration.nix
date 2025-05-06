@@ -164,12 +164,20 @@
     open = true;
   };
 
-  # Audio https://nixos.wiki/wiki/PipeWire
+  # Audio https://wiki.nixos.org/wiki/PipeWire
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     pulse.enable = true;
+  };
+
+  # Print https://wiki.nixos.org/wiki/Printing
+  services.printing.enable = true;
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
   };
 
   # home-manager configuration

@@ -37,6 +37,7 @@
       ];
     })
     davinci-resolve
+    libreoffice
   ];
 
   home.preferXdgDirectories = true;
