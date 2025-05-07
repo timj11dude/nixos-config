@@ -70,6 +70,7 @@
         "10.0.0.1"
     ];
   };
+  services.tailscale.enable = true;
 
   fileSystems = let
     credentials = config.sops.secrets."truenas/login".path;
