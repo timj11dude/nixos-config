@@ -58,7 +58,7 @@ These will have to be internal services, ought not rely on having root privilage
 - [x] GPG Agent
 - [ ] IPFS
 - [ ] Resilio Sync (consider Syncthing alternative)
-- [ ] Tailscale
+- [x] Tailscale
 - ~~Docker~~ (Needs to be enabled at system level)
 
 ## Additional Notes
