@@ -74,7 +74,7 @@
 
   fileSystems = let
     credentials = config.sops.secrets."truenas/login".path;
-    options = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,uid=${toString config.users.users.timj.uid},gid=${toString config.users.groups.wheel.gid}";
+    options = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,uid=1000,gid=${toString config.users.groups.wheel.gid}";
   in {
     "/mnt/jacoserver/timj" = {
       device = "//10.0.0.2/private";
@@ -204,6 +204,49 @@
     vim
     git
   ];
+
+  # backups
+  # restic to be moved into home.nix once home-manager version enters stable version
+  # https://github.com/nix-community/home-manager/pull/6729
+  services.restic = let
+    defaultExcludeList = [
+      "/home/*/.cache"
+      "/home/*/.gradle"
+      "/home/*/.mozilla/firefox/timj/storage"
+      "/home/*/.jdks"
+      "/home/*/.npm"
+      "/home/*/.local/share/Steam/steamapps"
+      "/home/*/.local/share/Steam/userdata/**/gamerecordings/"
+      "/home/*/.local/share/Steam/ubuntu12_64/"
+      "node_modules"
+      ".git/"
+      ".gradle/"
+      "build/"
+    ];
+  in {
+    backups = {
+      homeBackup = {
+        user = "timj";
+        initialize = true;
+        paths = [
+          "/home/timj"
+        ];
+        exclude = defaultExcludeList;
+        extraBackupArgs = [
+          "--exclude-caches"
+          "--one-file-system"
+        ];
+        pruneOpts = [
+          "--keep-daily 7"
+          "--keep-weekly 5"
+          "--keep-monthly 12"
+          "--keep-yearly 75"
+        ];
+        passwordFile = "/home/timj/.config/restic/password"; #todo source somewhere safer
+        repository = "/mnt/jacoserver/timj/restic_backups"; #todo use ssh
+      };
+    };
+  };
 
   programs.steam = {
     enable = true;
