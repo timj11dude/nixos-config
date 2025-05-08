@@ -1,0 +1,13 @@
+/home/*/.cache
+/home/*/.gradle
+/home/*/.mozilla/firefox/timj/storage
+/home/*/.jdks
+/home/*/.npm
+/home/*/.local/share/Steam/steamapps
+/home/*/.local/share/Steam/userdata/**/gamerecordings/
+/home/*/.local/share/Steam/ubuntu12_32/
+/home/*/.local/share/Steam/ubuntu12_64/
+node_modules/
+.git/
+.gradle/
+build/

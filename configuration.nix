@@ -209,25 +209,16 @@
   # restic to be moved into home.nix once home-manager version enters stable version
   # https://github.com/nix-community/home-manager/pull/6729
   services.restic = let
-    defaultExcludeList = [
-      "/home/*/.cache"
-      "/home/*/.gradle"
-      "/home/*/.mozilla/firefox/timj/storage"
-      "/home/*/.jdks"
-      "/home/*/.npm"
-      "/home/*/.local/share/Steam/steamapps"
-      "/home/*/.local/share/Steam/userdata/**/gamerecordings/"
-      "/home/*/.local/share/Steam/ubuntu12_64/"
-      "node_modules"
-      ".git/"
-      ".gradle/"
-      "build/"
-    ];
+    defaultExcludeList = builtins.filter (f: builtins.isString f) (builtins.split "\n" (builtins.readFile ./restic/excludesFile));
   in {
     backups = {
       homeBackup = {
         user = "timj";
         initialize = true;
+        timerConfig = {
+          OnCalendar = "*:02";
+          Persistent = true;
+        };
         paths = [
           "/home/timj"
         ];
@@ -237,6 +228,7 @@
           "--one-file-system"
         ];
         pruneOpts = [
+          "--keep-hourly 20"
           "--keep-daily 7"
           "--keep-weekly 5"
           "--keep-monthly 12"
