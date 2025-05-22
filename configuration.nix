@@ -247,7 +247,13 @@
   };
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = true; # todo want to change this to false
+      AllowUsers = [ "timj" ];
+    };
+  };
 
   # Open ports in the firewall. TODO debug this isn't working:
   networking.firewall = {
