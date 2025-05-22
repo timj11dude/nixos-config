@@ -40,9 +40,7 @@
       "cuda_cccl"
       "cuda_nvcc"
       "steam"
-      "steam-original"
       "steam-unwrapped"
-      "steam-run"
     ];
 
   # Bootloader.
