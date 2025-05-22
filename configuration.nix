@@ -8,8 +8,17 @@
   lib,
   ...
 }:
-
-{
+let
+  asBytes = let
+    pow = i: n: if (n>0) then (pow i (n - 1)) * i else 1;
+    m = {
+      "KB"=1;
+      "MB"=2;
+      "GB"=3;
+      "TB"=4;
+    };
+   in size: (unit: size * (pow 1024 m."${unit}"));
+in {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -51,8 +60,8 @@
 
   # clear up 10GB space when less than 1GB left
   nix.extraOptions = ''
-    min-free = ${toString (1 * 1024 * 1024 * 1024)}
-    max-free = ${toString (10 * 1024 * 1024 * 1024)}
+    min-free = ${toString (asBytes 1 "GB")}
+    max-free = ${toString (asBytes 10 "GB")}
   '';
 
   networking.hostName = "aether"; # Define your hostname.
