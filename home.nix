@@ -190,28 +190,6 @@ in {
   programs.vim = {
     enable = true;
     defaultEditor = true;
-    settings = {
-      backupdir = [
-        "${config.xdg.stateHome}/vim"
-        "~/"
-        "/tmp"
-      ];
-      directory = [
-        "${config.xdg.cacheHome}/vim"
-        "~/"
-        "/tmp"
-      ];
-      undodir = [
-        "${config.xdg.cacheHome}/vim"
-        "~/"
-        "/tmp"
-      ];
-      undofile = true;
-      number = true;
-    };
-    extraConfig = ''
-      set viminfo+=n${config.xdg.stateHome}/vim,~/,/tmp
-    '';
   };
 
   programs.git = {
