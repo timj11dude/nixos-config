@@ -49,7 +49,7 @@ Programs that I have personal configurations for.
   - [x] rofi
     - [x] rofi-emoji
     - [x] rofi-calc
-  - [ ] Starship (custom prompt)
+  - [x] Starship (custom prompt)
   - [x] eza (aka exa)
   - [ ] mc
 - [x] git
