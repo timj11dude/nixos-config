@@ -16,6 +16,12 @@ This project should be clone into `~/.config/home-manager`
 Tracking what parts of my existing setup I would like to manage with `home-manager`,
 and still needs migrating.
 
+### Idea Inbox
+List of software or sources to consider for additional installation, that have not yet been categorised.
+
+- https://karakeep.app/
+- https://www.youtube.com/watch?v=rWMQ-g2QDsI
+
 ### Packages
 User specific services I could have installed via nix instead of the system's default package manager.
 These should be anything I don't have need to be specifically configured.
