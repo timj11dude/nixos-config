@@ -206,6 +206,10 @@ in {
       "pnpm-lock.yaml binary"
       "gradle.lockfile binary"
     ];
+    delta = {
+      enable = true;
+      options = {};
+    };
     signing = {
       key = "5CCFF11F4D012DE2";
       signByDefault = true;
@@ -231,13 +235,18 @@ in {
     };
   };
 
+  # AKA: jj
   programs.jujutsu = {
     enable = true;
     package = unstablePkgs.jujutsu;
     settings = {
-        user.name = "Timothy Jacobson";
-        user.email = "tim@jaconet.uk";
-        ui.default-command = "log";
+      user.name = "Timothy Jacobson";
+      user.email = "tim@jaconet.uk";
+      ui = {
+        default-command = "log";
+        diff.tool = "delta";
+      };
+      merge-tools.delta.diff-expected-exit-codes = [0 1];
     };
   };
 
