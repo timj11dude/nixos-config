@@ -217,32 +217,38 @@ in {
   # https://github.com/nix-community/home-manager/pull/6729
   services.restic = let
     defaultExcludeList = builtins.filter (f: builtins.isString f) (builtins.split "\n" (builtins.readFile ./restic/excludesFile));
+    includeList = builtins.filter (f: builtins.isString f) (builtins.split "\n" (builtins.readFile ./restic/includesFile));
+    defaultHomeConfig = {
+      user = "timj";
+      initialize = true;
+      timerConfig = {
+        OnCalendar = "*:02";
+        Persistent = true;
+      };
+      extraBackupArgs = [
+        "--exclude-caches"
+        "--one-file-system"
+      ];
+      pruneOpts = [
+        "--keep-hourly 20"
+        "--keep-daily 7"
+        "--keep-weekly 5"
+        "--keep-monthly 12"
+        "--keep-yearly 75"
+      ];
+      passwordFile = "/home/timj/.config/restic/password"; #todo source somewhere safer
+      repository = "/mnt/jacoserver/timj/restic_backups"; #todo use ssh
+    };
   in {
     backups = {
-      homeBackup = {
-        user = "timj";
-        initialize = true;
-        timerConfig = {
-          OnCalendar = "*:02";
-          Persistent = true;
-        };
+      homeBackup = lib.recursiveUpdate defaultHomeConfig {
         paths = [
           "/home/timj"
         ];
         exclude = defaultExcludeList;
-        extraBackupArgs = [
-          "--exclude-caches"
-          "--one-file-system"
-        ];
-        pruneOpts = [
-          "--keep-hourly 20"
-          "--keep-daily 7"
-          "--keep-weekly 5"
-          "--keep-monthly 12"
-          "--keep-yearly 75"
-        ];
-        passwordFile = "/home/timj/.config/restic/password"; #todo source somewhere safer
-        repository = "/mnt/jacoserver/timj/restic_backups"; #todo use ssh
+      };
+      homeBackupIncludes = lib.recursiveUpdate defaultHomeConfig {
+        paths = includeList;
       };
     };
   };

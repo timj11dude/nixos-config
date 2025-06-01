@@ -37,6 +37,10 @@ These should be anything I don't have need to be specifically configured.
 - [x] Steam/Lutris
   - [x] multimc
     - [ ] configure the install location under .local/share
+  - [x] (❗) Battle.Net required [weird installation hack](https://www.youtube.com/watch?v=PRY56C9Jce0).
+    - [x] World of Warcraft
+      - [ ] ❗ Some graphical issues
+      - [x] Settings & Addons part of restic backed up
 - [ ] VPN Unlimited
 - [ ] AWS CLI (maybe only for work specific deployment?) (may want to pre-configure too)
 
@@ -63,6 +67,7 @@ Programs that I have personal configurations for.
 These will have to be internal services, ought not rely on having root privilages to start systemd level services
 
 - [x] GPG Agent
+- [x] Restic Backup
 - [ ] IPFS
 - [ ] Resilio Sync (consider Syncthing alternative)
 - [x] Tailscale

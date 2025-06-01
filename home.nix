@@ -1,5 +1,6 @@
 {
   config,
+  osConfig,
   pkgs,
   lib,
   ...
@@ -30,14 +31,6 @@ in {
     xdotool
     qalculate-qt
     nixfmt-rfc-style
-    (lutris-free.override {
-      extraLibraries = pkgs: [
-        qt5.full
-      ];
-      extraPkgs = pkgs: [
-        jdk
-      ];
-    })
     davinci-resolve
     libreoffice
   ];
@@ -315,6 +308,14 @@ in {
       containersForce = true;
       # extensions = []; # todo worth revisiting to always bundle prefered password manager bitwarden
     };
+  };
+
+  programs.lutris = {
+    enable = true;
+    steamPackage = osConfig.programs.steam.package;
+    extraPackages = [ pkgs.winetricks ];
+    protonPackages = [pkgs.proton-ge-bin];
+    winePackages = [ pkgs.wineWowPackages.full ];
   };
 
   # not available to configure via home-manager in stable nixpkgs 24.11
