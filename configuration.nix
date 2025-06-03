@@ -207,10 +207,13 @@ in {
   };
   home-manager.users.timj = ./home.nix;
 
-  environment.systemPackages = with pkgs; [
-    vim
-    git
-  ];
+  environment = {
+    pathsToLink = [ "/share/zsh" ];
+    systemPackages = with pkgs; [
+      vim
+      git
+    ];
+  };
 
   # backups
   # restic to be moved into home.nix once home-manager version enters stable version

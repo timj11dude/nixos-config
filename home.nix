@@ -38,9 +38,6 @@ in {
   home.preferXdgDirectories = true;
 
   home.file = {
-    #    ".zshenv" = {
-    #      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/home-manager/zsh/.zshenv";
-    #    };
     ".gradle/gradle.properties".text = ''
       org.gradle.daemon.idletimeout=3600000
       ssh.auth.sock=/run/user/1000/gnupg/S.gpg-agent.ssh
@@ -98,7 +95,9 @@ in {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    dotDir = ".config/zsh"; # todo swap with "${config.xdg.configHome}/zsh"
+    dotDir = let
+      configHome = builtins.substring (builtins.stringLength "${config.home.homeDirectory}" + 1) 999 "${config.xdg.configHome}";
+      in "${configHome}/zsh"; # todo swap with "${config.xdg.configHome}/zsh"
     history = {
       append = true;
       extended = true;
