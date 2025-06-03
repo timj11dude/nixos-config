@@ -114,7 +114,7 @@ in {
       theme = "agnoster";
     };
     shellAliases = {
-      ls = "exa --icons";
+      ls = "eza --icons";
       ll = "ls -la";
       lll = "ls --long --grid --header --group --accessed --modified -Hla";
       tree = "ls --tree";
@@ -161,7 +161,7 @@ in {
 #    defaultCommand = "fd --type f"; # fzf
     defaultOptions = [ "--preview 'head {}'" ];
 #    changeDirWidgetCommand = "fd --type d"; # Alt-C
-    changeDirWidgetOptions = [ "--preview 'exa --tree {} | head -200'"];
+    changeDirWidgetOptions = [ "--preview 'eza --tree {} | head -200'"];
 #    fileWidgetCommand = "fd --type f"; # Ctl-T
     fileWidgetOptions = [ "--preview 'head {}'" ];
     historyWidgetOptions = [ "--exact" ]; # Ctl-R
