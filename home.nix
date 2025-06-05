@@ -20,7 +20,7 @@ in {
   #  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
 
   home.packages = with pkgs; [
-    jetbrains.idea-community # todo investigate best means to customize
+    jetbrains.idea-community-bin # todo investigate best means to customize
     nixpkgs-fmt
     obsidian
     discord
