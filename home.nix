@@ -33,6 +33,8 @@ in {
     nixfmt-rfc-style
     davinci-resolve
     libreoffice
+    digikam
+    gimp
   ];
 
   home.preferXdgDirectories = true;
