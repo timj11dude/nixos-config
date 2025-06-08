@@ -8,10 +8,15 @@
 let
   unstablePkgs = import <nixos-unstable> { inherit pkgs; };
 in {
+
+  imports = [
+    ./modules/gaming/gaming.nix
+  ];
+
   home.username = "timj";
   home.homeDirectory = "/home/timj";
 
-  home.stateVersion = "24.11"; # Please read the comment before changing.
+  home.stateVersion = "24.11"; # do not modify with checking upgrade notes
 
   # https://nix-community.github.io/home-manager/index.xhtml#sec-usage-gpu-non-nixos
   #  nixGL.packages = import <nixgl> { inherit pkgs; };
@@ -308,14 +313,6 @@ in {
       containersForce = true;
       # extensions = []; # todo worth revisiting to always bundle prefered password manager bitwarden
     };
-  };
-
-  programs.lutris = {
-    enable = true;
-    steamPackage = osConfig.programs.steam.package;
-    extraPackages = [ pkgs.winetricks ];
-    protonPackages = [pkgs.proton-ge-bin];
-    winePackages = [ pkgs.wineWowPackages.full ];
   };
 
   # not available to configure via home-manager in stable nixpkgs 24.11
