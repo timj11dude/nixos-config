@@ -22,6 +22,7 @@ List of software or sources to consider for additional installation, that have n
 - https://karakeep.app/
 - https://www.youtube.com/watch?v=rWMQ-g2QDsI
 - https://github.com/ankitpokhrel/jira-cli
+- https://youtu.be/79rmEOrd5u8?si=AMH1itAA0Tq2mG84
 
 ### Packages
 User specific services I could have installed via nix instead of the system's default package manager.

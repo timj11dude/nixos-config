@@ -11,12 +11,13 @@ in {
 
   imports = [
     ./modules/terminal/terminal.nix
+    ./modules/gaming/gaming.nix
   ];
 
   home.username = "timj";
   home.homeDirectory = "/home/timj";
 
-  home.stateVersion = "24.11"; # Please read the comment before changing.
+  home.stateVersion = "24.11"; # do not modify with checking upgrade notes
 
   # https://nix-community.github.io/home-manager/index.xhtml#sec-usage-gpu-non-nixos
   #  nixGL.packages = import <nixgl> { inherit pkgs; };
@@ -25,7 +26,7 @@ in {
   #  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
 
   home.packages = with pkgs; [
-    jetbrains.idea-community # todo investigate best means to customize
+    jetbrains.idea-ultimate
     nixpkgs-fmt
     obsidian
     discord
@@ -37,6 +38,8 @@ in {
     nixfmt-rfc-style
     davinci-resolve
     libreoffice
+    digikam
+    gimp
   ];
 
   home.preferXdgDirectories = true;
@@ -100,14 +103,6 @@ in {
     };
   };
 
-  programs.lutris = {
-    enable = true;
-    steamPackage = osConfig.programs.steam.package;
-    extraPackages = [ pkgs.winetricks ];
-    protonPackages = [pkgs.proton-ge-bin];
-    winePackages = [ pkgs.wineWowPackages.full ];
-  };
-
   # not available to configure via home-manager in stable nixpkgs 24.11
   #nixpkgs.config.cudaSupport = true;
   #
@@ -133,5 +128,6 @@ in {
       "obsidian"
       "discord"
       "davinci-resolve"
+      "idea-ultimate"
     ];
 }
