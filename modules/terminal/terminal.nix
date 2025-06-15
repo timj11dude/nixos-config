@@ -5,6 +5,7 @@ in {
 
   home.packages = with pkgs; [
     eza
+    devenv
   ];
 
   home.file = {
@@ -12,7 +13,7 @@ in {
       executable = true;
       text = ''
         #!/bin/sh
-        "${pkgs.jdk}/lib/openjdk/bin/java" -cp "${pkgs.jetbrains.idea-community}/idea-community/plugins/vcs-git/lib/git4idea-rt.jar:${pkgs.jetbrains.idea-community}/idea-community/lib/externalProcess-rt.jar" git4idea.gpg.PinentryApp
+        "${pkgs.jdk}/lib/openjdk/bin/java" -cp "${pkgs.jetbrains.idea-ultimate}/idea-ultimate/plugins/vcs-git/lib/git4idea-rt.jar:${pkgs.jetbrains.idea-ultimate}/idea-ultimate/lib/externalProcess-rt.jar" git4idea.gpg.PinentryApp
       '';
     };
   };
