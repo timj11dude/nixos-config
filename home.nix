@@ -129,5 +129,6 @@ in {
       "discord"
       "davinci-resolve"
       "idea-ultimate"
+      "wowup-cf"
     ];
 }
