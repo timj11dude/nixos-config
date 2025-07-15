@@ -163,6 +163,8 @@ in {
   # Configure console keymap
   console.keyMap = "uk";
 
+  hardware.ckb-next.enable = true;
+
   # Video
   hardware.graphics = {
     enable = true;
@@ -202,6 +204,7 @@ in {
       "networkmanager"
       "wheel"
       "audio"
+      "video"
     ];
     #    packages = with pkgs; [ ];
   };
