@@ -40,6 +40,7 @@ in {
     libreoffice
     digikam
     gimp
+    vlc
   ];
 
   home.preferXdgDirectories = true;
