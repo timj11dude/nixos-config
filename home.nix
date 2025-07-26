@@ -41,6 +41,7 @@ in {
     digikam
     gimp
     vlc
+    unzip
   ];
 
   home.preferXdgDirectories = true;
