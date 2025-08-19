@@ -236,8 +236,8 @@ in {
         "--one-file-system"
       ];
       pruneOpts = [
-        "--keep-hourly 20"
-        "--keep-daily 7"
+        "--keep-hourly 3"
+        "--keep-daily 3"
         "--keep-weekly 5"
         "--keep-monthly 12"
         "--keep-yearly 75"
