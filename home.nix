@@ -42,6 +42,7 @@ in {
     gimp
     vlc
     unzip
+    clockify
   ];
 
   home.preferXdgDirectories = true;
@@ -132,5 +133,6 @@ in {
       "davinci-resolve"
       "idea-ultimate"
       "wowup-cf"
+      "clockify"
     ];
 }
