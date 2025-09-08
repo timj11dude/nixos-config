@@ -26,23 +26,23 @@ in {
   #  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
 
   home.packages = with pkgs; [
+    barrier
+    clockify
+    davinci-resolve
+    digikam
+    discord
+    gimp
     jetbrains.idea-ultimate
+    libreoffice
+    maim
+    nixfmt-rfc-style
     nixpkgs-fmt
     obsidian
-    discord
-    barrier
-    xclip
-    maim
-    xdotool
     qalculate-qt
-    nixfmt-rfc-style
-    davinci-resolve
-    libreoffice
-    digikam
-    gimp
-    vlc
     unzip
-    clockify
+    vlc
+    xclip
+    xdotool
   ];
 
   home.preferXdgDirectories = true;
@@ -72,8 +72,8 @@ in {
       modi = "drun,emoji,ssh";
     };
     plugins = with pkgs; [
-      rofi-emoji
       rofi-calc
+      rofi-emoji
     ];
   };
 
@@ -128,11 +128,11 @@ in {
   nixpkgs.config.allowUnfreePredicate =
     pkg:
     builtins.elem (lib.getName pkg) [
-      "obsidian"
-      "discord"
-      "davinci-resolve"
-      "idea-ultimate"
-      "wowup-cf"
       "clockify"
+      "davinci-resolve"
+      "discord"
+      "idea-ultimate"
+      "obsidian"
+      "wowup-cf"
     ];
 }

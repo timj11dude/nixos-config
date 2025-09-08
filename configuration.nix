@@ -42,12 +42,12 @@ in {
   nixpkgs.config.allowUnfreePredicate =
     pkg:
     builtins.elem (lib.getName pkg) [
-      "nvidia-x11"
-      "nvidia-settings"
-      "cuda_cudart"
-      "libcublas"
       "cuda_cccl"
+      "cuda_cudart"
       "cuda_nvcc"
+      "libcublas"
+      "nvidia-settings"
+      "nvidia-x11"
       "steam"
       "steam-unwrapped"
     ];
