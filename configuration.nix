@@ -42,10 +42,6 @@ in {
   nixpkgs.config.allowUnfreePredicate =
     pkg:
     builtins.elem (lib.getName pkg) [
-      "cuda_cccl"
-      "cuda_cudart"
-      "cuda_nvcc"
-      "libcublas"
       "nvidia-settings"
       "nvidia-x11"
       "steam"
@@ -287,13 +283,13 @@ in {
   };
 
   #nixpkgs.config.cudaSupport = true;
-  services.ollama = let
-    unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
-  in {
-    enable = true;
-    acceleration = "cuda";
-    package = unstable.ollama;
-  };
+#  services.ollama = let
+#    unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+#  in {
+#    enable = true;
+#    acceleration = "cuda";
+#    package = unstable.ollama;
+#  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
