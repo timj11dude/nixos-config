@@ -4,6 +4,7 @@ let
 in {
   home.packages = with pkgs; [
     wowup-cf
+    prismlauncher
   ];
   programs.lutris = {
     enable = true;
