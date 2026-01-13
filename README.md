@@ -31,6 +31,9 @@ These should be anything I don't have a need to be specifically configured.
 - [x] Shell Editor - Vim
 - [x] direnv
 - [x] btop
+- fun things
+  - [ ] install-nothing
+  - [ ] cmatrix
 - [x] IntelliJ
 - [x] Obsidian
 - [x] Discord
