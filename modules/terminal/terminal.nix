@@ -13,7 +13,7 @@ in {
       executable = true;
       text = ''
         #!/bin/sh
-        "${pkgs.jdk}/lib/openjdk/bin/java" -cp "${pkgs.jetbrains.idea-ultimate}/idea-ultimate/plugins/vcs-git/lib/git4idea-rt.jar:${pkgs.jetbrains.idea-ultimate}/idea-ultimate/lib/externalProcess-rt.jar" git4idea.gpg.PinentryApp
+        "${pkgs.jdk}/lib/openjdk/bin/java" -cp "${pkgs.jetbrains.idea}/idea/plugins/vcs-git/lib/git4idea-rt.jar:${pkgs.jetbrains.idea}/idea/lib/externalProcess-rt.jar" git4idea.gpg.PinentryApp
       '';
     };
   };
@@ -39,9 +39,7 @@ in {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    dotDir = let
-      configHome = builtins.substring (builtins.stringLength "${config.home.homeDirectory}" + 1) 999 "${config.xdg.configHome}";
-      in "${configHome}/zsh"; # todo swap with "${config.xdg.configHome}/zsh"
+    dotDir = config.xdg.configHome;
     history = {
       append = true;
       extended = true;
@@ -124,27 +122,15 @@ in {
 
   programs.git = {
     enable = true;
-    userName = "Timothy Jacobson";
-    userEmail = "tim@jaconet.uk";
-    aliases = {
-      st = "status";
-      ll = "log --decorate --graph";
-    };
-    attributes = [
-      "package-lock.json binary"
-      "yarn.lock binary"
-      "pnpm-lock.yaml binary"
-      "gradle.lockfile binary"
-    ];
-    delta = {
-      enable = true;
-      options = {};
-    };
-    signing = {
-      key = "5CCFF11F4D012DE2";
-      signByDefault = true;
-    };
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Timothy Jacobson";
+        email = "tim@jaconet.uk";
+      };
+      alias = {
+        st = "status";
+        ll = "log --decorate --graph";
+      };
       format = {
         pretty = "format:%C(auto,yellow)%h%C(auto,magenta)% G? %C(auto,blue)%>(12,trunc)%ad %C(auto,green)%<(7,trunc)%aN%C(auto,reset)%s%C(auto,red)% gD% D";
       };
@@ -163,6 +149,22 @@ in {
         defaultBranch = "main";
       };
     };
+    attributes = [
+      "package-lock.json binary"
+      "yarn.lock binary"
+      "pnpm-lock.yaml binary"
+      "gradle.lockfile binary"
+    ];
+    signing = {
+      key = "5CCFF11F4D012DE2";
+      signByDefault = true;
+    };
+  };
+
+  programs.delta = {
+      enable = true;
+      enableGitIntegration = true;
+      options = {};
   };
 
   # AKA: jj
@@ -210,13 +212,18 @@ in {
 
   programs.ssh = {
     enable = true;
-    compression = true;
-    controlMaster = "auto";
-    controlPath = "/tmp/%u:%r@%h:%p";
-    controlPersist = "120";
-    forwardAgent = false;
-    serverAliveCountMax = 6;
-    serverAliveInterval = 15;
+    enableDefaultConfig = false;
+    matchBlocks = {
+      "*" = {
+        compression = true;
+        controlMaster = "auto";
+        controlPath = "/tmp/%u:%r@%h:%p";
+        controlPersist = "120";
+        forwardAgent = false;
+        serverAliveCountMax = 6;
+        serverAliveInterval = 15;
+      };
+    };
     extraConfig = ''
       Ciphers aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
       TCPKeepAlive yes

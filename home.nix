@@ -26,13 +26,13 @@ in {
   #  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
 
   home.packages = with pkgs; [
-    barrier
+    # barrier # consider 'deskflow' or 'input-leap'
     clockify
     davinci-resolve
     digikam
     discord
     gimp
-    jetbrains.idea-ultimate
+    jetbrains.idea
     libreoffice
     maim
     nixfmt-rfc-style
@@ -131,7 +131,7 @@ in {
       "clockify"
       "davinci-resolve"
       "discord"
-      "idea-ultimate"
+      "idea"
       "obsidian"
       "wowup-cf"
     ];
