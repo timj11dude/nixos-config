@@ -109,14 +109,15 @@ in {
   # not available to configure via home-manager in stable nixpkgs 24.11
   #nixpkgs.config.cudaSupport = true;
   #
-  #services.ollama = {
-  #  enable = true;
-  #  acceleration = "cuda";
-  #  environmentVariables = {
-  #    OLLAMA_MODELS = "/mnt/corsair_1tb/ollama";
-  #  };
-  #};
-
+  services.ollama = {
+    enable = true;
+    acceleration = false;
+    environmentVariables = {
+      OLLAMA_MODELS = "/mnt/corsair_1tb/ollama";
+      SYNC_MODELS = "true";
+      LOAD_MODELS = "llama3.2";
+    };
+  };
   # todo needs a bit more careful consideration, will consume lots of disk space
   #  services.resilio = {
   #    enable = true;
