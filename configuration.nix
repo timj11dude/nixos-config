@@ -77,9 +77,10 @@ in {
   fileSystems = let
     credentials = config.sops.secrets."truenas/login".path;
     options = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,uid=1000,gid=${toString config.users.groups.wheel.gid}";
+    truenas = "192.168.1.177";
   in {
     "/mnt/jacoserver/timj" = {
-      device = "//10.0.0.2/private";
+      device = "//${truenas}/private";
       fsType = "cifs";
       options = [
         options
@@ -87,7 +88,7 @@ in {
       ];
     };
     "/mnt/jacoserver/photos" = {
-      device = "//10.0.0.2/Photos";
+      device = "//${truenas}/Photos";
       fsType = "cifs";
       options = [
         options
@@ -95,7 +96,7 @@ in {
       ];
     };
     "/mnt/jacoserver/media" = {
-      device = "//10.0.0.2/Media";
+      device = "//${truenas}/Media";
       fsType = "cifs";
       options = [
         options
