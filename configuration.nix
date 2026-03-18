@@ -58,7 +58,13 @@ in {
     max-free = ${toString (asBytes 10 "GB")}
   '';
 
-  networking.hostName = "aether"; # Define your hostname.
+  networking = {
+    hostName = "aether";
+    hosts = {
+      "127.0.0.1" = [ "localhost" "aether"];
+      "192.168.0.178" = [ "kube_control_plane" "cluster" ];
+    };
+  };
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -211,8 +217,12 @@ in {
     systemPackages = with pkgs; [
       vim
       git
+      comma
     ];
   };
+
+  programs.nix-index.enable = true;
+#  programs.nix-index-database.comma.enable = true;
 
   # backups
   # restic to be moved into home.nix once home-manager version enters stable version
