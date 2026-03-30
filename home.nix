@@ -39,6 +39,7 @@ in {
     nixpkgs-fmt
     obsidian
     qalculate-qt
+    terraform
     unzip
     vlc
     xclip
@@ -134,6 +135,7 @@ in {
       "discord"
       "idea"
       "obsidian"
+      "terraform"
       "wowup-cf"
     ];
 }
