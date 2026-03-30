@@ -39,6 +39,7 @@ in {
     nixpkgs-fmt
     obsidian
     qalculate-qt
+    super-productivity
     terraform
     unzip
     vlc
