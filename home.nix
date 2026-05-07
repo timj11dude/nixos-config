@@ -48,6 +48,26 @@ in {
   ];
 
   home.preferXdgDirectories = true;
+  
+  accounts.email.accounts = {
+    gmail = {
+      primary = true;
+      address = "timj91@gmail.com";
+      aliases = ["tim@jaconet.uk"];
+      gpg = null; # {encryptByDefault = false; key = null; signByDefault = true; }
+      imap = {
+        authentication = "login";
+        host = "imap.gmail.com";
+        tls = {
+          enable = true;
+        };
+      };
+      thunderbird = {
+        enable = true;
+      };
+    };
+  };
+  programs.thunderbird.enable = true;
 
   home.file = {
     ".gradle/gradle.properties".text = ''
