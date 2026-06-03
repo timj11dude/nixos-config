@@ -11,7 +11,7 @@ in {
     steamPackage = osConfig.programs.steam.package;
     extraPackages = [ pkgs.winetricks ];
     protonPackages = [pkgs.proton-ge-bin];
-    winePackages = [ pkgs.wineWowPackages.full ];
+    winePackages = [ pkgs.wineWow64Packages.full ];
   };
 
 # todo figure out how to do this here, rather than in home.nix

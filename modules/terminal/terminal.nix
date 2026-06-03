@@ -213,7 +213,7 @@ in {
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       "*" = {
         compression = true;
         controlMaster = "auto";

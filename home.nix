@@ -38,7 +38,7 @@ in {
     libreoffice
     maim
     mono
-    nixfmt-rfc-style
+    nixfmt
     nixpkgs-fmt
     obsidian
     qalculate-qt
@@ -109,6 +109,7 @@ in {
       containersForce = true;
       # extensions = []; # todo worth revisiting to always bundle prefered password manager bitwarden
     };
+    configPath = "${config.xdg.configHome}/mozilla/firefox";
   };
 
   # not available to configure via home-manager in stable nixpkgs 24.11
