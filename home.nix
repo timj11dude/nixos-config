@@ -31,10 +31,13 @@ in {
     davinci-resolve
     digikam
     discord
+    dotnet-sdk
     gimp
     jetbrains.idea
+    jetbrains.rider
     libreoffice
     maim
+    mono
     nixfmt-rfc-style
     nixpkgs-fmt
     obsidian
@@ -136,6 +139,7 @@ in {
       "discord"
       "idea"
       "obsidian"
+      "rider"
       "terraform"
       "wowup-cf"
     ];
