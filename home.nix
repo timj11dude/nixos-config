@@ -52,6 +52,8 @@ in {
 
   home.preferXdgDirectories = true;
 
+  programs.thunderbird.enable = true;
+
   home.file = {
     ".gradle/gradle.properties".text = ''
       org.gradle.daemon.idletimeout=3600000
