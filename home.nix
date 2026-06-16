@@ -34,6 +34,9 @@ in
     feh
     gcr
     gimp
+    jetbrains.idea
+    jetbrains.rider
+    fuzzel
     libreoffice
     maim
     mono

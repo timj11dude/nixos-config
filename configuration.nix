@@ -128,9 +128,27 @@ in {
     LC_TIME = "en_GB.UTF-8";
   };
 
-  # Configure keymap in X11
-  services.xserver = {
+  programs.hyprland = {
     enable = true;
+    withUWSM = true; # recommended for most users
+    xwayland.enable = true; # Xwayland can be disabled.
+  };
+
+  programs.niri.enable = true;
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${config.programs.niri.package}/bin/niri-session";
+        user = "timj";
+      };
+    };
+  };
+  systemd.user.services.niri.enableDefaultPath = false;
+
+#  # Configure keymap in X11
+  services.xserver = {
+    enable = false;
     xkb = {
       layout = "gb";
       variant = "";
@@ -142,10 +160,10 @@ in {
         monitorConfig = "DisplaySize 5120 1440";
       }
     ];
-    windowManager.i3.enable = true;
+    windowManager.i3.enable = false;
     videoDrivers = [ "nvidia" ];
   };
-  services.displayManager.defaultSession = "none+i3";
+#  services.displayManager.defaultSession = "none+i3";
   services.displayManager.autoLogin = {
     enable = false; #todo make dynamic on LUKS
     user = "timj";
@@ -206,9 +224,11 @@ in {
   environment = {
     pathsToLink = [ "/share/zsh" ];
     systemPackages = with pkgs; [
-      vim
-      git
       comma
+      git
+      hyprlauncher
+      vim
+      xwayland-satellite # xwayland support
     ];
   };
 
