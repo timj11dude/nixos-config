@@ -12,6 +12,7 @@ in {
   imports = [
     ./modules/terminal/terminal.nix
     ./modules/gaming/gaming.nix
+    ./modules/music/music.nix
   ];
 
   home.username = "timj";
@@ -82,12 +83,6 @@ in {
       rofi-calc
       rofi-emoji
     ];
-  };
-
-  #todo need to add configuration to change audio driver used
-  programs.spotify-player = {
-    enable = true;
-    #    package = (pkgs.spotify-player.override { withAudioBackend = "pulseaudio"; });
   };
 
   programs.firefox = {
