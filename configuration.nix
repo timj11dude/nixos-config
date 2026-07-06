@@ -152,7 +152,6 @@ in {
         output = "DP-2";
         monitorConfig = ''
           Option "RightOf" "DP-4"
-          Option "Rotate" "right"
         '';
       }
     ];
