@@ -33,6 +33,7 @@ in {
     digikam
     discord
     dotnet-sdk
+    gcr
     gimp
     jetbrains.idea
     jetbrains.rider
@@ -85,6 +86,8 @@ in {
       rofi-emoji
     ];
   };
+
+  services.gnome-keyring.enable = true;
 
   programs.firefox = {
     enable = true;
