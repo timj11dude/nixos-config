@@ -43,6 +43,7 @@ in {
     nixpkgs-fmt
     obsidian
     qalculate-qt
+    secretspec
     super-productivity
     terraform
     unzip
