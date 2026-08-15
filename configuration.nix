@@ -23,6 +23,7 @@ in {
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     <home-manager/nixos>
+    ./modules/backups/restic
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     ./disko.nix
     "${builtins.fetchTarball {
@@ -225,46 +226,7 @@ in {
 #  programs.nix-index.enable = true;
 #  programs.nix-index-database.comma.enable = true;
 
-  # backups
-  # restic to be moved into home.nix once home-manager version enters stable version
-  # https://github.com/nix-community/home-manager/pull/6729
-  services.restic = let
-    defaultExcludeList = builtins.filter (f: builtins.isString f) (builtins.split "\n" (builtins.readFile ./restic/excludesFile));
-    includeList = builtins.filter (f: builtins.isString f) (builtins.split "\n" (builtins.readFile ./restic/includesFile));
-    defaultHomeConfig = {
-      user = "timj";
-      initialize = true;
-      timerConfig = {
-        OnCalendar = "*:02";
-        Persistent = true;
-      };
-      extraBackupArgs = [
-        "--exclude-caches"
-        "--one-file-system"
-      ];
-      pruneOpts = [
-        "--keep-hourly 3"
-        "--keep-daily 3"
-        "--keep-weekly 5"
-        "--keep-monthly 12"
-        "--keep-yearly 75"
-      ];
-      passwordFile = "/home/timj/.config/restic/password"; #todo source somewhere safer
-      repository = "/mnt/jacoserver/timj/restic_backups"; #todo use ssh
-    };
-  in {
-    backups = {
-      homeBackup = lib.recursiveUpdate defaultHomeConfig {
-        paths = [
-          "/home/timj"
-        ];
-        exclude = defaultExcludeList;
-      };
-      homeBackupIncludes = lib.recursiveUpdate defaultHomeConfig {
-        paths = includeList;
-      };
-    };
-  };
+  backups.restic.enable = true;
 
   programs.steam = {
     enable = true;

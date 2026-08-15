@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 
 NIXOS=/etc/nixos/
-DIRECTORIES=$(fd --type d)
-FILES=$(fd .nix)
 
-echo "moving files to ${NIXOS}"
-sudo cp $FILES $NIXOS
-sudo cp -r $DIRECTORIES $NIXOS
+echo "Syncing files to ${NIXOS}"
+sudo rsync -avR $(fd .nix) modules $NIXOS
 
 sudo nixos-rebuild $@

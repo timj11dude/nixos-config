@@ -11,3 +11,4 @@ node_modules/
 .git/
 .gradle/
 build/
+/home/*/Videos/SteamRecordings/
