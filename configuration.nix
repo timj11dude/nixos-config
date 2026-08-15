@@ -211,6 +211,7 @@ in {
     #    packages = with pkgs; [ ];
   };
   home-manager.users.timj = ./home.nix;
+  nix.settings.trusted-users = [ "root" "timj" ];
 
   environment = {
     pathsToLink = [ "/share/zsh" ];
