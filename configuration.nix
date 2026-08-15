@@ -24,6 +24,7 @@ in {
     ./hardware-configuration.nix
     <home-manager/nixos>
     ./modules/backups/restic
+    ./modules/gaming
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     ./disko.nix
     "${builtins.fetchTarball {
@@ -40,14 +41,10 @@ in {
 
   sops.secrets."truenas/login" = {};
 
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
+  nixpkgs.config.allowUnfreePackages = [
       "nvidia-settings"
       "nvidia-x11"
-      "steam"
-      "steam-unwrapped"
-    ];
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -166,7 +163,7 @@ in {
   # Configure console keymap
   console.keyMap = "uk";
 
-  hardware.ckb-next.enable = false; # disabled for debugging
+  hardware.ckb-next.enable = true;
 
   # Video
   hardware.graphics = {
@@ -227,12 +224,6 @@ in {
 #  programs.nix-index-database.comma.enable = true;
 
   backups.restic.enable = true;
-
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true;
-    localNetworkGameTransfers.openFirewall = true;
-  };
 
   # Enable the OpenSSH daemon.
   services.openssh = {

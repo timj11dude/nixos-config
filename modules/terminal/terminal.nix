@@ -154,6 +154,7 @@ in {
       "yarn.lock binary"
       "pnpm-lock.yaml binary"
       "gradle.lockfile binary"
+      "devenv.lock binary"
     ];
     signing = {
       key = "5CCFF11F4D012DE2";

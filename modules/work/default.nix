@@ -1,7 +1,6 @@
 { config, pkgs, lib, ... }:
 {
   home.packages = with pkgs; [
-    clockify
     dotnet-sdk
     jetbrains.idea
     jetbrains.rider
@@ -16,8 +15,7 @@
     id = 2;
   };
 
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "clockify"
+  nixpkgs.config.allowUnfreePackages = [
     "idea"
     "rider"
     "terraform"

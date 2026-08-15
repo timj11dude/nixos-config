@@ -1,10 +1,11 @@
-{ config, pkgs, osConfig, ... }:
+{ config, pkgs, lib, osConfig, ... }:
 let
   unstablePkgs = import <nixos-unstable> { inherit pkgs; };
 in {
   home.packages = with pkgs; [
     wowup-cf
     prismlauncher
+    discord
   ];
   programs.lutris = {
     enable = true;
@@ -14,8 +15,8 @@ in {
     winePackages = [ pkgs.wineWow64Packages.full ];
   };
 
-# todo figure out how to do this here, rather than in home.nix
-#  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-#    "wowup-cf"
-#  ];
+  nixpkgs.config.allowUnfreePackages = [
+    "wowup-cf"
+    "discord"
+  ];
 }

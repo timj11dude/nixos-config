@@ -7,7 +7,8 @@
 }:
 let
   unstablePkgs = import <nixos-unstable> { inherit pkgs; };
-in {
+in
+{
 
   imports = [
     ./modules/terminal/terminal.nix
@@ -28,10 +29,8 @@ in {
   #  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
 
   home.packages = with pkgs; [
-    # barrier # consider 'deskflow' or 'input-leap'
     davinci-resolve
     digikam
-    discord
     gcr
     gimp
     libreoffice
@@ -122,12 +121,9 @@ in {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
   # explicitly defined list of "unfree" packages to be allowed to be installed
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "davinci-resolve"
-      "discord"
-      "obsidian"
-      "wowup-cf"
-    ];
+
+  nixpkgs.config.allowUnfreePackages = [
+    "davinci-resolve"
+    "obsidian"
+  ];
 }

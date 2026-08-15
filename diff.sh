@@ -5,7 +5,6 @@ DIRECTORIES=$(fd --type d)
 FILES=$(fd .nix)
 
 TEMP=`mktemp -d`
-cp $FILES $TEMP
-cp -r $DIRECTORIES $TEMP
+rsync -avR $(fd .nix) modules $TEMP
 
 diff -qr $NIXOS $TEMP
