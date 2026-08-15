@@ -13,6 +13,7 @@ in {
     ./modules/terminal/terminal.nix
     ./modules/gaming/gaming.nix
     ./modules/music/music.nix
+    ./modules/work
   ];
 
   home.username = "timj";
@@ -28,15 +29,11 @@ in {
 
   home.packages = with pkgs; [
     # barrier # consider 'deskflow' or 'input-leap'
-    clockify
     davinci-resolve
     digikam
     discord
-    dotnet-sdk
     gcr
     gimp
-    jetbrains.idea
-    jetbrains.rider
     libreoffice
     maim
     mono
@@ -45,8 +42,6 @@ in {
     obsidian
     qalculate-qt
     secretspec
-    super-productivity
-    terraform
     unzip
     vlc
     xclip
@@ -100,12 +95,6 @@ in {
           icon = "fingerprint";
           id = 1;
         };
-        work = {
-          name = "Work";
-          color = "orange";
-          icon = "briefcase";
-          id = 2;
-        };
       };
       containersForce = true;
       # extensions = []; # todo worth revisiting to always bundle prefered password manager bitwarden
@@ -136,13 +125,9 @@ in {
   nixpkgs.config.allowUnfreePredicate =
     pkg:
     builtins.elem (lib.getName pkg) [
-      "clockify"
       "davinci-resolve"
       "discord"
-      "idea"
       "obsidian"
-      "rider"
-      "terraform"
       "wowup-cf"
     ];
 }
