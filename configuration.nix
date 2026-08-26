@@ -165,7 +165,7 @@ in {
   # Configure console keymap
   console.keyMap = "uk";
 
-  hardware.ckb-next.enable = false; # disabled for debugging
+  hardware.ckb-next.enable = true;
 
   # Video
   hardware.graphics = {
