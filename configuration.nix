@@ -163,6 +163,7 @@ in {
   # Configure console keymap
   console.keyMap = "uk";
 
+  # todo move this to Aether specific configuration
   hardware.ckb-next.enable = true;
 
   # Video

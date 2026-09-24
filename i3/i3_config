@@ -312,6 +312,9 @@ exec_always --no-startup-id fix_xcursor
 # Autorandr
 exec --no-startup-id autorandr.sh -c --default standard
 
+# Corsair RGB keyboard/mouse GUI
+exec --no-startup-id ckb-next -b
+
 # Color palette used for the terminal ( ~/.Xresources file )
 # Colors are gathered based on the documentation:
 # https://i3wm.org/docs/userguide.html#xresources
