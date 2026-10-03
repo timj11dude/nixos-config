@@ -11,6 +11,11 @@ set $mod Mod4
 default_border pixel 1
 default_floating_border normal
 
+# OLED settings
+exec --no-startup-id feh --bg-fill --no-fehbg --randomize ~/Photos/wallpapers/pexels-*
+exec --always xset s 300 300
+exec --always xset dpms 300 300 300
+
 # Hide borders
 hide_edge_borders none
 
@@ -229,13 +234,9 @@ for_window [class="(?i)virtualbox"] floating enable border normal
 for_window [class="Xfburn"] floating enable
 for_window [class="qalculate-qt"] floating enable border normal
 
-# set workspaces to specific output
-workspace $ws1 output DP-4
-workspace $ws2 output DP-4
-workspace $ws3 output HDMI-0
-
-
-
+# Match only Steam games, Proton, or Wine/Lutris environments
+# for_window [class="(?i)(steam_app_|wine|proton)" fullscreen] move to workspace 9
+for_window [class=".*"] if [fullscreen]; move container to workspace $ws7
 
 # switch to workspace with urgent window automatically
 #for_window [urgent=latest] focus
@@ -350,6 +351,8 @@ set_from_resource $term_color15    color15
 bar {
 	i3bar_command i3bar
 	status_command i3status
+	mode hide
+	hidden_state hide
 	position bottom
 
 ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
@@ -380,11 +383,11 @@ bindsym $mod+m bar mode toggle
 
 # Theme colors
 # class                   border  backgr. text    indic.   child_border
-  client.focused          #556064 #556064 #80FFF9 #FDF6E3
-  client.focused_inactive #2F3D44 #2F3D44 #1ABC9C #454948
-  client.unfocused        #2F3D44 #2F3D44 #1ABC9C #454948
-  client.urgent           #CB4B16 #FDF6E3 #1ABC9C #268BD2
-  client.placeholder      #000000 #0c0c0c #ffffff #000000 
+client.focused          #222222 #000000 #ffffff #00ff00 #333333
+client.focused_inactive #111111 #000000 #888888 #111111 #111111
+client.unfocused        #111111 #000000 #888888 #111111 #111111
+client.urgent           #ff0000 #000000 #ffffff #ff0000 #ff0000
+client.placeholder      #000000 #000000 #ffffff #000000 #000000
 
   client.background       #2B2C2B
 
@@ -394,6 +397,7 @@ bindsym $mod+m bar mode toggle
 
 # Set inner/outer gaps
 gaps inner 14
+gaps horizontal 100
 gaps outer -2
 
 # Additionally, you can issue commands with the following syntax. This is useful to bind keys to changing the gap size.
@@ -402,7 +406,7 @@ gaps outer -2
 # gaps outer all plus 5
 
 # Smart gaps (gaps used if only more than one container on the workspace)
-smart_gaps on
+smart_gaps inverse_outer
 
 # Smart borders (draw borders around container only if it is not the only container on this workspace) 
 # on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is 0)

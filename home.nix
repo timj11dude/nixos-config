@@ -31,6 +31,7 @@ in
   home.packages = with pkgs; [
     davinci-resolve
     digikam
+    feh
     gcr
     gimp
     libreoffice

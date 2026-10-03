@@ -135,24 +135,15 @@ in {
       layout = "gb";
       variant = "";
     };
-    windowManager.i3.enable = true;
-    videoDrivers = [ "nvidia" ];
     xrandrHeads = [
-      # this unfortuantly is very output order specific
-      {
-        output = "HDMI-0";
-        monitorConfig = ''
-          Option "LeftOf" "DP-4"
-        '';
-      }
-      "DP-4"
       {
         output = "DP-2";
-        monitorConfig = ''
-          Option "RightOf" "DP-4"
-        '';
+        primary = true;
+        monitorConfig = "DisplaySize 5120 1440";
       }
     ];
+    windowManager.i3.enable = true;
+    videoDrivers = [ "nvidia" ];
   };
   services.displayManager.defaultSession = "none+i3";
   services.displayManager.autoLogin = {
