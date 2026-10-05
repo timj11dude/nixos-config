@@ -126,6 +126,20 @@ in
   programs.home-manager.enable = true;
   # explicitly defined list of "unfree" packages to be allowed to be installed
 
+  services.swayidle = let niri = pkgs.niri; in {
+    enable = true;
+    timeouts = [
+      {
+        timeout = 300;
+        command = "${niri}/bin/niri msg action power-off-monitors";
+        resumeCommand = "${niri}/bin/niri msg action power-on-monitors";
+      }
+    ];
+    #beforeSleep = [
+    #  { command = "${niri}/bin/niri msg action power-off-monitors"; }
+    #];
+  };
+
   nixpkgs.config.allowUnfreePackages = [
     "davinci-resolve"
     "obsidian"
