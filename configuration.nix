@@ -18,11 +18,11 @@ let
       "TB"=4;
     };
    in size: (unit: size * (pow 1024 m."${unit}"));
+   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-26.05.tar.gz";
 in {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    <home-manager/nixos>
     ./modules/backups/restic
     ./modules/gaming
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
@@ -32,6 +32,7 @@ in {
       # replace this with an actual hash
       sha256 = "1ddxjbwlygzcylvmj1vbgwv2hl0vwh911wsxk21qmwmlhq8pbgfr";
     }}/modules/sops"
+    "${home-manager}/nixos"
   ];
 
   sops.defaultSopsFile = ./secrets/secrets.yaml;
