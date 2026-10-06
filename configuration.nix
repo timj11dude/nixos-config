@@ -44,12 +44,18 @@ in {
 
   nixpkgs.config.allowUnfreePackages = [
       "nvidia-settings"
-      "nvidia-x11"
   ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+# in-case of blackscreen-freezing on hibernate wake up. or nvidia ram error viewed on tty2
+#  boot.kernelParams = [
+#   "mem_sleep_default=s2idle"
+#   "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
+#   "nvidia.NVreg_TemporaryFilePath=/var/tmp"
+# ];
+
 
   # clear up 10GB space when less than 1GB left
   nix.extraOptions = ''
@@ -162,8 +168,9 @@ in {
       }
     ];
     windowManager.i3.enable = false;
-    videoDrivers = [ "nvidia" ];
+  #  videoDrivers = [ "nvidia" ];
   };
+
 #  services.displayManager.defaultSession = "none+i3";
   services.displayManager.autoLogin = {
     enable = false; #todo make dynamic on LUKS
@@ -182,6 +189,7 @@ in {
   };
   hardware.nvidia = {
     modesetting.enable = true;
+    powerManagement.enable = true; # Saves/restores VRAM on sleep/resume
     open = true;
   };
 
