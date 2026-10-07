@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   unstablePkgs = import <nixos-unstable> { inherit pkgs; };
 in {
@@ -64,6 +64,7 @@ in {
       # only really required whilst we have pacman
       lsi = ''expac -H M "%011m	%-20n	%10d" $(comm -23 <(pacman -Qqen | sort) <({ pacman -Qqg xorg; expac -l n %E base; } | sort -u)) | sort -n'';
     };
+    initContent = lib.mkOrder 1000 ''eval "$(devenv hook zsh)"'';
   };
 
   programs.starship = {

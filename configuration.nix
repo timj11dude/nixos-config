@@ -43,7 +43,8 @@ in {
   sops.secrets."truenas/login" = {};
 
   nixpkgs.config.allowUnfreePackages = [
-      "nvidia-settings"
+    "nvidia-settings"
+    "nvidia-x11"
   ];
 
   # Bootloader.
@@ -168,7 +169,7 @@ in {
       }
     ];
     windowManager.i3.enable = false;
-  #  videoDrivers = [ "nvidia" ];
+    videoDrivers = [ "nvidia" ];
   };
 
 #  services.displayManager.defaultSession = "none+i3";
