@@ -45,6 +45,22 @@ in {
   nixpkgs.config.allowUnfreePackages = [
     "nvidia-settings"
     "nvidia-x11"
+    "nvidia-persistenced"
+    "iscan"
+    "iscan-ds"
+    "iscan-gt-f720-bundle"
+    "iscan-gt-s650-bundle"
+    "iscan-gt-s600-bundle"
+    "iscan-gt-s80-bundle"
+    "iscan-v370-bundle"
+    "iscan-v330-bundle"
+    "iscan-perfection-v550-bundle"
+    "iscan-gt-x750-bundle"
+    "iscan-gt-x820-bundle"
+    "iscan-gt-x770-bundle"
+    "iscan-data"
+    "iscan-gt"
+    "iscan-nt-bundle"
   ];
 
   # Bootloader.
@@ -225,6 +241,8 @@ in {
       "wheel"
       "audio"
       "video"
+      "scanner"
+      "lp"
     ];
     #    packages = with pkgs; [ ];
   };
@@ -270,11 +288,12 @@ in {
     ];
   };
 
+  hardware.sane = {
+    enable = true;
+    extraBackends = [ pkgs.epkowa ];
+  };
+
   #nixpkgs.config.cudaSupport = true;
-#  services.ollama = let
-#    unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
-#  in {
-#    enable = true;
 #    acceleration = "cuda";
 #    package = unstable.ollama;
 #  };
