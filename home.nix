@@ -29,7 +29,6 @@ in
   #  nixGL.installScripts = [ "mesa" "nvidiaPrime" ];
 
   home.packages = with pkgs; [
-    davinci-resolve
     digikam
     feh
     gcr
@@ -167,7 +166,6 @@ in
   };
 
   nixpkgs.config.allowUnfreePackages = [
-    "davinci-resolve"
     "obsidian"
   ];
 }
