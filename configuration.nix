@@ -66,12 +66,12 @@ in {
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-# in-case of blackscreen-freezing on hibernate wake up. or nvidia ram error viewed on tty2
-#  boot.kernelParams = [
-#   "mem_sleep_default=s2idle"
-#   "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
-#   "nvidia.NVreg_TemporaryFilePath=/var/tmp"
-# ];
+  boot.kernelParams = [
+    "nvidia-drm.modeset=1"
+#    "mem_sleep_default=s2idle"
+    "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
+#    "nvidia.NVreg_TemporaryFilePath=/var/tmp"
+  ];
 
 
   # clear up 10GB space when less than 1GB left
