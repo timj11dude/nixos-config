@@ -106,7 +106,7 @@ in {
   fileSystems = let
     credentials = config.sops.secrets."truenas/login".path;
     options = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,uid=1000,gid=${toString config.users.groups.wheel.gid}";
-    truenas = "192.168.1.177";
+    truenas = "192.168.1.178";
   in {
     "/mnt/jacoserver/timj" = {
       device = "//${truenas}/private";
