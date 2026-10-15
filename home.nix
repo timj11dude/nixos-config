@@ -127,7 +127,7 @@ in
   # explicitly defined list of "unfree" packages to be allowed to be installed
 
   services.swayidle = let
-      lock = "${pkgs.swaylock}/bin/swaylock --daemonize";
+      lock = "${pkgs.swaylock}/bin/swaylock -c 000000 --daemonize";
       display = status: "${pkgs.niri}/bin/niri msg action power-${status}-monitors";
     in {
     enable = true;
@@ -140,24 +140,15 @@ in
         timeout = 300;
         command = lock;
       }
-      {
-        timeout = 310;
-        command = display "off";
-        resumeCommand = display "on";
-      }
     ];
     events = [
       {
         event = "before-sleep";
-        command = (display "off") + "; " + lock;
+        command = lock;
       }
       {
         event = "after-resume";
         command = display "on";
-      }
-      {
-        event = "lock";
-        command = (display "off") + "; " + lock;
       }
       {
         event = "unlock";
