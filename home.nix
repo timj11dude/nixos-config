@@ -44,6 +44,7 @@ in
     obsidian
     qalculate-qt
     secretspec
+    swaybg
     unzip
     vlc
     xclip
