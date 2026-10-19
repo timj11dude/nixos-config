@@ -288,10 +288,13 @@ in {
     ];
   };
 
+  # Print/Scanner support (ideally)
   hardware.sane = {
     enable = true;
     extraBackends = [ pkgs.epkowa ];
   };
+
+
 
   #nixpkgs.config.cudaSupport = true;
 #    acceleration = "cuda";
