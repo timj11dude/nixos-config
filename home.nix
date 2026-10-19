@@ -83,6 +83,7 @@ in
       rofi-calc
       rofi-emoji
     ];
+    theme = "arthur";
   };
 
   services.gnome-keyring.enable = true;
