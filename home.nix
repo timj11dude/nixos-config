@@ -38,6 +38,7 @@ in
     fuzzel
     libreoffice
     maim
+    mistral-vibe
     mono
     nixfmt
     nixpkgs-fmt
@@ -108,12 +109,11 @@ in
 
   # not available to configure via home-manager in stable nixpkgs 24.11
   #nixpkgs.config.cudaSupport = true;
-  #
+  # could move this to be configured in configuration.nix instead
   services.ollama = {
     enable = true;
-    acceleration = false;
+    acceleration = "cuda";
     environmentVariables = {
-      OLLAMA_MODELS = "/mnt/corsair_1tb/ollama";
       SYNC_MODELS = "true";
       LOAD_MODELS = "llama3.2";
     };
@@ -160,5 +160,10 @@ in
 
   nixpkgs.config.allowUnfreePackages = [
     "obsidian"
+    "cuda_cudart"
+    "cuda_nvcc"
+    "cuda_cccl"
+    "libcublas"
+    "textual-speedups"
   ];
 }
