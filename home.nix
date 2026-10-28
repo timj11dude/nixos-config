@@ -160,6 +160,8 @@ in
 
   nixpkgs.config.allowUnfreePackages = [
     "obsidian"
+    "idea"
+    "rider"
     "cuda_cudart"
     "cuda_nvcc"
     "cuda_cccl"
