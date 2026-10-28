@@ -5,16 +5,12 @@
   lib,
   ...
 }:
-let
-  unstablePkgs = import <nixos-unstable> { inherit pkgs; };
-in
 {
-
   imports = [
     ./modules/terminal/terminal.nix
     ./modules/gaming/gaming.nix
     ./modules/music/music.nix
-    (import ./modules/ai { inherit unstablePkgs; })
+    ./modules/ai
   ];
 
   home.username = "timj";
@@ -107,17 +103,6 @@ in
     configPath = "${config.xdg.configHome}/mozilla/firefox";
   };
 
-  # not available to configure via home-manager in stable nixpkgs 24.11
-  #nixpkgs.config.cudaSupport = true;
-  # could move this to be configured in configuration.nix instead
-  #services.ollama = {
-  #  enable = true;
-  #  acceleration = "cuda";
-  #  environmentVariables = {
-  #    SYNC_MODELS = "true";
-  #    LOAD_MODELS = "llama3.2";
-  #  };
-  #};
   # todo needs a bit more careful consideration, will consume lots of disk space
   #  services.resilio = {
   #    enable = true;

@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 let
-  unstablePkgs = import <nixos-unstable> { inherit pkgs; };
+  pins = import ../../pins.nix;
 in {
 
   home.packages = with pkgs; [
@@ -172,7 +172,7 @@ in {
   # AKA: jj
   programs.jujutsu = {
     enable = true;
-    package = unstablePkgs.jujutsu;
+    package = pins.unstablePkgs.jujutsu;
     settings = {
       user.name = "Timothy Jacobson";
       user.email = "tim@jaconet.uk";

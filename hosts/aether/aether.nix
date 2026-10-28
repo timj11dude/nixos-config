@@ -1,4 +1,12 @@
-{ pkgs, libs, ... }:
 {
+  ...
+}:
+{
+  ai = {
+    enable = true;
 
+    # One-time move of the model store left behind by the old Home Manager
+    # Ollama service. Remove this line after the first successful rebuild.
+    ollama.legacyModelDir = "/home/timj/.ollama/models";
+  };
 }

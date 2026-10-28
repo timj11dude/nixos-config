@@ -1,7 +1,5 @@
 { config, pkgs, lib, osConfig, ... }:
-let
-  unstablePkgs = import <nixos-unstable> { inherit pkgs; };
-in {
+{
   home.packages = with pkgs; [
     (let
       version = "2.24.0-beta.6";

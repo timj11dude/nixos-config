@@ -1,7 +1,5 @@
 { config, pkgs, osConfig, ... }:
-let
-  unstablePkgs = import <nixos-unstable> { inherit pkgs; };
-in {
+{
   #todo need to add configuration to change audio driver used
   programs.spotify-player = {
     enable = true;

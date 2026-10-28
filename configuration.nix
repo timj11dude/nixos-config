@@ -25,11 +25,12 @@ in {
     ./hardware-configuration.nix
     ./modules/backups/restic
     ./modules/gaming
+    ./modules/ai/nixos.nix
+    ./hosts/aether/aether.nix
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     ./disko.nix
     "${builtins.fetchTarball {
       url = "https://github.com/Mic92/sops-nix/archive/cff8437c5fe8c68fc3a840a21bf1f4dc801da40d.tar.gz";
-      # replace this with an actual hash
       sha256 = "1ddxjbwlygzcylvmj1vbgwv2hl0vwh911wsxk21qmwmlhq8pbgfr";
     }}/modules/sops"
     "${home-manager}/nixos"
@@ -62,6 +63,16 @@ in {
     "iscan-gt"
     "iscan-nt-bundle"
   ];
+
+  # pkgs.ollama-cuda pulls in unfree CUDA toolkit components.
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    let
+      name = lib.getName pkg;
+    in
+    lib.hasPrefix "cuda" name
+    || lib.hasPrefix "libcu" name
+    || lib.hasPrefix "libnpp" name
+    || name == "libnvjitlink";
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -298,11 +309,6 @@ in {
     substituters = [ "https://cache.nixos-cuda.org" ];
     trusted-public-keys = [ "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=" ];
   };
-
-  #nixpkgs.config.cudaSupport = true;
-#    acceleration = "cuda";
-#    package = unstable.ollama;
-#  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
