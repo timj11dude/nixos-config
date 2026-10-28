@@ -12,6 +12,12 @@ Covering all types of programs, configurations and user services.
 
 This project should be clone into `~/.config/home-manager`
 
+## Checks
+
+Run `./check.sh` before rebuilding (it is also invoked by `rebuild.sh`).
+It parses every Nix file, evaluates the full system configuration, and
+formatting-checks the AI module.
+
 ## TODO
 Tracking what parts of my existing setup I would like to manage with `home-manager`,
 and still needs migrating.
