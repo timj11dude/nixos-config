@@ -271,7 +271,7 @@ in {
   services.openssh = {
     enable = true;
     settings = {
-      PasswordAuthentication = true; # todo want to change this to false
+      PasswordAuthentication = false; # todo want to change this to false
       AllowUsers = [ "timj" ];
     };
   };
