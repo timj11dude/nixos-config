@@ -14,7 +14,7 @@ in
     ./modules/terminal/terminal.nix
     ./modules/gaming/gaming.nix
     ./modules/music/music.nix
-    ./modules/work
+    (import ./modules/ai { inherit unstablePkgs; })
   ];
 
   home.username = "timj";
@@ -110,14 +110,14 @@ in
   # not available to configure via home-manager in stable nixpkgs 24.11
   #nixpkgs.config.cudaSupport = true;
   # could move this to be configured in configuration.nix instead
-  services.ollama = {
-    enable = true;
-    acceleration = "cuda";
-    environmentVariables = {
-      SYNC_MODELS = "true";
-      LOAD_MODELS = "llama3.2";
-    };
-  };
+  #services.ollama = {
+  #  enable = true;
+  #  acceleration = "cuda";
+  #  environmentVariables = {
+  #    SYNC_MODELS = "true";
+  #    LOAD_MODELS = "llama3.2";
+  #  };
+  #};
   # todo needs a bit more careful consideration, will consume lots of disk space
   #  services.resilio = {
   #    enable = true;
