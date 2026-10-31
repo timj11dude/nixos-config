@@ -103,6 +103,10 @@ in
           };
           inherit models;
         };
+        permissions = [
+          "question"
+          "webfetch"
+        ];
       };
 
       tui = {
