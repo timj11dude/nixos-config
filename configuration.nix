@@ -26,6 +26,7 @@ in {
     ./modules/backups/restic
     ./modules/gaming
     ./modules/ai/nixos.nix
+    ./modules/noctalia
     ./hosts/aether/aether.nix
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     ./disko.nix
@@ -271,7 +272,7 @@ in {
     ];
   };
 
-  programs.waybar.enable = true;
+#  programs.waybar.enable = true;
 
 #  programs.nix-index.enable = true;
 #  programs.nix-index-database.comma.enable = true;

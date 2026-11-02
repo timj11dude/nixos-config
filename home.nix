@@ -11,6 +11,7 @@
     ./modules/gaming/gaming.nix
     ./modules/music/music.nix
     ./modules/ai
+    ./modules/noctalia/home.nix
   ];
 
   home.username = "timj";
