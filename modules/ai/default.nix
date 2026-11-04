@@ -107,6 +107,7 @@ in
           "question"
           "webfetch"
         ];
+        lsp = true;
       };
 
       tui = {
