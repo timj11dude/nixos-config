@@ -35,6 +35,7 @@
     fuzzel
     libreoffice
     maim
+    nemo
     mistral-vibe
     mono
     nixfmt
