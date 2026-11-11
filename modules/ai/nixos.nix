@@ -62,6 +62,22 @@ in
         '';
       };
 
+      contextLength = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 32768;
+        description = ''
+          Default context window, in tokens, for every loaded model
+          (`OLLAMA_CONTEXT_LENGTH`).
+
+          Ollama otherwise auto-picks a tiny window (as low as 4096 tokens
+          below 23 GiB of VRAM), which OpenCode's system prompt and tool
+          definitions can fill on their own, causing the model to echo them
+          back instead of answering. OpenCode's own docs recommend 64k+.
+          Larger values need more VRAM for the KV cache, so lower this if a
+          model starts spilling onto CPU or failing to load.
+        '';
+      };
+
       maxLoadedModels = lib.mkOption {
         type = lib.types.ints.positive;
         default = 1;
@@ -104,6 +120,7 @@ in
         OLLAMA_KEEP_ALIVE = ollama.keepAlive;
         OLLAMA_MAX_LOADED_MODELS = toString ollama.maxLoadedModels;
         OLLAMA_NUM_PARALLEL = "1";
+        OLLAMA_CONTEXT_LENGTH = toString ollama.contextLength;
       };
     };
 

@@ -87,6 +87,8 @@ in
       enable = true;
       inherit (cfg) package extraPackages;
       enableMcpIntegration = true;
+  options.ai.hermes = {
+    enable = lib.mkEnableOption "Hermes Agent (installed alongside OpenCode)";
 
       settings = {
         # The package is managed by Nix; update checks would only suggest
@@ -109,15 +111,50 @@ in
         ];
         lsp = true;
       };
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = hermes-agent-flake.packages.${lib.systems.examples.x86_64-linux}.default;
+      defaultText = lib.literalExpression "hermes-agent-flake.packages.x86_64-linux.default";
+      description = "Hermes Agent package to install.";
+    };
 
       tui = {
         theme = "system";
+    settings = lib.mkOption {
+      type = lib.types.attrs;
+      default = {
+        model.default = "ollama/gemma4:latest";
       };
 
       web = {
         enable = cfg.web.enable;
         environmentFile = cfg.web.environmentFile;
       };
+    environmentFiles = lib.mkOption {
+      type = lib.types.listOf lib.types.path;
+      default = [ ];
+      description = ''
+        Paths to env files containing Hermes API keys (e.g. sops secrets).
+        Merged into `$HERMES_HOME/.env` at activation time. Do not put secrets in
+        `settings` or `environment` — they end up in the world-readable Nix store.
+      '';
     };
   };
+    # Hermes Agent — installed by default alongside OpenCode when the AI module
+    # is enabled. Configured via the Hermes Home Manager module.
+    (lib.mkIf (hcfg.enable && (osConfig.ai.enable or true)) {
+      programs.hermes-agent = {
+        enable = true;
+        package = hcfg.package;
+      };
+
+      services.hermes-agent = {
+        enable = true;
+        gateway.enable = true;
+        package = hcfg.package;
+        settings = hcfg.settings;
+        environmentFiles = hcfg.environmentFiles;
+      };
+    })
+  ];
 }

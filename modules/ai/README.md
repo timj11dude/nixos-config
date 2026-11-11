@@ -126,4 +126,16 @@ $ ./check.sh
 ```
 
 parses every Nix file, evaluates the complete system configuration (which
-catches renamed or removed options), and formatting-checks this module.
+catches renamed or removed options), 
+## Future Ideas and Planned Integrations
+
+This section outlines features planned for future development, focusing on deeper system integration and advanced model management.
+
+### System Integration
+*   **dmenu/CLI Prompt:** Implement a dedicated interface (such as a dmenu or similar prompt) allowing users to submit quick questions or commands directly to the AI service without opening a full terminal session.
+*   **System Control:** Extend AI capabilities to handle system control queries. This would involve defining schemas and permissions to allow the model to suggest or execute local system actions (e.g., "Dim the lights," "Open the terminal to folder X").
+
+### Advanced Model Hosting & Routing
+*   **Remote/Hybrid Model Support:** Develop support for connecting to models hosted on remote machines or external APIs (e.g., a dedicated server or cloud service). This would allow the local setup to act as a client for both local and remote LLMs.
+*   **Intelligent Model Routing:** Implement logic to automatically route requests to the most appropriate model based on context, complexity, and cost. This would include a mechanism for "failover" or escalation to state-of-the-art (frontier) models when local/standard models lack the necessary capabilities.
+
