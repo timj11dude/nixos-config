@@ -10,6 +10,7 @@
     ./modules/home/terminal/terminal.nix
     ./modules/home/gaming/gaming.nix
     ./modules/home/music/music.nix
+    ./modules/home/opencode
     ./modules/home/ai
     ./modules/home/herdr
     ./modules/home/noctalia/home.nix
