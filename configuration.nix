@@ -26,6 +26,7 @@ in {
     ./modules/system/backups/restic
     ./modules/system/gaming
     ./modules/system/ai
+    ./modules/system/herdr
     ./modules/system/noctalia
     ./modules/hosts/aether
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
