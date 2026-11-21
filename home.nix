@@ -12,12 +12,15 @@
     ./modules/home/music/music.nix
     ./modules/home/ai
     ./modules/home/noctalia/home.nix
+    ./modules/home/super-productivity
   ];
 
   home.username = "timj";
   home.homeDirectory = "/home/timj";
 
   home.stateVersion = "24.11"; # do not modify with checking upgrade notes
+
+  programs.super-productivity.enable = true;
 
   # https://nix-community.github.io/home-manager/index.xhtml#sec-usage-gpu-non-nixos
   #  nixGL.packages = import <nixgl> { inherit pkgs; };
