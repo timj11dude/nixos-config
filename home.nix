@@ -23,7 +23,10 @@
 
   programs.herdr.enable = true;
 
-  programs.super-productivity.enable = true;
+  programs.super-productivity = {
+    enable = true;
+    mcp.enable = true;
+  };
 
   # https://nix-community.github.io/home-manager/index.xhtml#sec-usage-gpu-non-nixos
   #  nixGL.packages = import <nixgl> { inherit pkgs; };
