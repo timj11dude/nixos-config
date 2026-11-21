@@ -7,11 +7,11 @@
 }:
 {
   imports = [
-    ./modules/terminal/terminal.nix
-    ./modules/gaming/gaming.nix
-    ./modules/music/music.nix
-    ./modules/ai
-    ./modules/noctalia/home.nix
+    ./modules/home/terminal/terminal.nix
+    ./modules/home/gaming/gaming.nix
+    ./modules/home/music/music.nix
+    ./modules/home/ai
+    ./modules/home/noctalia/home.nix
   ];
 
   home.username = "timj";

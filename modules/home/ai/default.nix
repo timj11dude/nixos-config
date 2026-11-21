@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.ai.opencode;
-  pins = import ../../pins.nix;
+  pins = import ../../../pins.nix;
 
   # Only models that the local Ollama server actually serves. Keep this in
   # sync with ai.ollama.models in the system module.

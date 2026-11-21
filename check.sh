@@ -12,6 +12,6 @@ echo "==> Evaluating the system configuration"
 nix-instantiate '<nixpkgs/nixos>' -A system --arg configuration ./configuration.nix > /dev/null
 
 echo "==> Checking formatting of the AI module"
-nixfmt --check pins.nix modules/ai/*.nix
+nixfmt --check pins.nix modules/home/ai/*.nix modules/system/ai/*.nix
 
 echo "OK"

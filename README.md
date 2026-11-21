@@ -12,6 +12,42 @@ Covering all types of programs, configurations and user services.
 
 This project should be clone into `~/.config/home-manager`
 
+## Standalone Install (non-NixOS systems)
+
+This configuration can be used with [home-manager](https://github.com/nix-community/home-manager) on non-NixOS systems like macOS, without needing root permissions to install Nix.
+
+Install Nix as a single user (no root):
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+```
+
+On macOS this creates a user-local Nix store under `~/.nix` (or `~/nix`) instead of `/nix`, so no `sudo` is required.
+
+Then install home-manager standalone:
+
+```sh
+nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+nix-channel --update
+nix-shell '<home-manager>' -A install
+```
+
+Clone this repo into `~/.config/home-manager` and build:
+
+```sh
+git clone <this-repo> ~/.config/home-manager
+cd ~/.config/home-manager
+home-manager switch
+```
+
+On first run you may need to point home-manager at this checkout:
+
+```sh
+home-manager switch -f ~/.config/home-manager/home.nix
+```
+
+Note: some modules in this config reference Linux-specific paths (e.g. `/home/timj`, systemd services). On macOS you may need to adjust `home.homeDirectory` and disable any Linux-only modules in `home.nix`.
+
 ## Checks
 
 Run `./check.sh` before rebuilding (it is also invoked by `rebuild.sh`).
@@ -87,5 +123,5 @@ These will have to be internal services, ought not rely on having root privilege
 
 - I think I would prefer to return to LVM away from ZFS, and abstract away the HDD management from the quota and redundancy level configuration.
   This time bring the whole system with me, and properly set up caching on LVM this time.
-- [x] Local AI engine (Ollama + OpenCode) — see [modules/ai](modules/ai/README.md).
+- [x] Local AI engine (Ollama + OpenCode) — see [modules/home/ai](modules/home/ai/README.md).
 - https://github.com/devoxx/DevoxxGenieIDEAPlugin
