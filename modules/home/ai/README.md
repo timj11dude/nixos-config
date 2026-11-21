@@ -8,7 +8,7 @@ a per-user program:
 
 | File | Loaded by | Manages |
 | --- | --- | --- |
-| `nixos.nix` | `configuration.nix` | `services.ollama`, model pulling, model-store migration |
+| `modules/system/ai/default.nix` | `configuration.nix` | `services.ollama`, model pulling, model-store migration |
 | `default.nix` | `home.nix` | `programs.opencode`, provider and model config |
 
 ## Enable it
@@ -54,10 +54,19 @@ A fresh install of the current list downloads around 35 GB on first boot.
 ### One-time migration
 
 `ai.ollama.legacyModelDir` points at the store used by the old Home Manager
-service. When set, `ollama-migrate-models.service` moves it to
+service. When set, `ollama-migrate-models.service` merges it into
 `/var/lib/ollama/models` (and copies the registry key) before Ollama starts, so
-the existing models do not need re-downloading. Once that has happened, remove
-the option from the host config.
+the existing models do not need re-downloading. Blobs are content-addressed,
+so entries already present at the target are simply dropped from the legacy
+tree. Once the legacy directory is gone, remove the option from the host
+config.
+
+A second one-shot, `ollama-fixup-state-dir.service`, repairs the state
+directory left behind by nixpkgs' `DynamicUser` setup: `/var/lib/ollama` used
+to be a symlink into the root-only `/var/lib/private`, which the static
+`ollama` user cannot traverse ("permission denied: ensure path elements are
+traversable"). The module pins `DynamicUser=false`; the fixup moves the real
+directory back to `/var/lib/ollama` once and is a no-op afterwards.
 
 Models left in the migrated store that are no longer in `ai.ollama.models` stay
 on disk. Remove them with `ollama rm <model>` to reclaim space, or add them back
@@ -65,14 +74,24 @@ to `ai.ollama.models` and the provider list.
 
 ### VRAM
 
-By default Ollama keeps multiple models resident. On a GPU with limited VRAM
-this makes models fall back to CPU. The module sets:
+The GPU is a 10 GB RTX 3080 that also drives the desktop (~2.5 GiB already in
+use), so the server is tuned for a single model at a time with a predictable
+context window:
 
 - `OLLAMA_MAX_LOADED_MODELS=1`
-- `OLLAMA_KEEP_ALIVE=5m`
+- `OLLAMA_KEEP_ALIVE=2m`
 - `OLLAMA_NUM_PARALLEL=1`
+- `OLLAMA_CONTEXT_LENGTH=16384` (`ai.ollama.contextLength`) — Ollama would
+  otherwise pick 4k/32k/256k by itself, and 4k silently truncates prompts
+- `OLLAMA_FLASH_ATTENTION=true` (`ai.ollama.flashAttention`)
+- `OLLAMA_KV_CACHE_TYPE=q8_0` (`ai.ollama.kvCacheType`) — halves context
+  memory versus f16
+- `OLLAMA_GPU_OVERHEAD=1GiB` (`ai.ollama.gpuOverheadBytes`) — VRAM reserved
+  for the desktop
 
-Raise `ai.ollama.maxLoadedModels` only for models that fit together.
+Raise `ai.ollama.maxLoadedModels` only for models that fit together. OpenCode
+is told the same context window through the `limit` field of each model entry,
+so its compaction logic works against the real limit.
 
 ## OpenCode
 

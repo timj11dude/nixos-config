@@ -55,10 +55,11 @@ in
 
       keepAlive = lib.mkOption {
         type = lib.types.str;
-        default = "5m";
+        default = "2m";
         description = ''
           How long a model stays loaded after its last request
           (`OLLAMA_KEEP_ALIVE`). Stops idle models from holding VRAM forever.
+          Reduced to 2m to free up VRAM faster for the next task.
         '';
       };
 
@@ -70,6 +71,58 @@ in
 
           On a 10 GB GPU a single large model can already fill VRAM, so keeping
           more than one resident causes CPU/GPU split inference.
+        '';
+      };
+
+      contextLength = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 16384;
+        description = ''
+          Default context window in tokens (`OLLAMA_CONTEXT_LENGTH`), used
+          whenever a request does not specify one. Left unset, Ollama picks
+          4k/32k/256k based on detected VRAM, which is unpredictable on a GPU
+          shared with the desktop — and 4k silently truncates coding prompts.
+
+          16k fits a 7B Q4 model plus its q8_0 KV cache in the ~7 GiB of VRAM
+          the desktop leaves free. Raise towards 32768 only if nothing else is
+          using the GPU.
+        '';
+      };
+
+      flashAttention = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = ''
+          Enable flash attention (`OLLAMA_FLASH_ATTENTION`). Cuts KV-cache
+          VRAM use and speeds up long prompts on RTX-class GPUs; KV-cache
+          quantization is only effective together with it.
+        '';
+      };
+
+      kvCacheType = lib.mkOption {
+        type = lib.types.enum [
+          "f16"
+          "q8_0"
+          "q4_0"
+        ];
+        default = "q8_0";
+        description = ''
+          KV-cache quantization (`OLLAMA_KV_CACHE_TYPE`). q8_0 halves context
+          memory versus f16 with negligible quality loss; q4_0 saves more but
+          can degrade quality on long contexts.
+        '';
+      };
+
+      gpuOverheadBytes = lib.mkOption {
+        type = lib.types.ints.unsigned;
+        default = 1024 * 1024 * 1024;
+        description = ''
+          VRAM Ollama leaves untouched when scheduling models
+          (`OLLAMA_GPU_OVERHEAD`, bytes; 0 disables).
+
+          The desktop (niri, Firefox, Steam) already holds ~2.5 GiB of the
+          10 GiB card; reserving 1 GiB keeps model loads from fighting it for
+          the last free megabytes.
         '';
       };
 
@@ -103,21 +156,71 @@ in
       environmentVariables = {
         OLLAMA_KEEP_ALIVE = ollama.keepAlive;
         OLLAMA_MAX_LOADED_MODELS = toString ollama.maxLoadedModels;
+        # One request at a time: parallelism splits the context window and
+        # multiplies KV-cache memory, neither of which this GPU can spare.
         OLLAMA_NUM_PARALLEL = "1";
+        OLLAMA_CONTEXT_LENGTH = toString ollama.contextLength;
+        OLLAMA_FLASH_ATTENTION = lib.boolToString ollama.flashAttention;
+        OLLAMA_KV_CACHE_TYPE = ollama.kvCacheType;
+      }
+      // lib.optionalAttrs (ollama.gpuOverheadBytes > 0) {
+        OLLAMA_GPU_OVERHEAD = toString ollama.gpuOverheadBytes;
       };
     };
 
-    # The module only adds a restart policy to the model loader, not the
-    # server itself; a crash currently leaves Ollama down until the next boot.
     systemd.services.ollama.serviceConfig = lib.mkIf ollama.enable {
+      # The nixpkgs module runs the service with systemd DynamicUser, which
+      # stores the state directory under /var/lib/private (0700, root-owned).
+      # Combined with the static `ollama` user that path is not traversable
+      # and the server refuses to start ("mkdir /var/lib/ollama/models/blobs:
+      # permission denied: ensure path elements are traversable").
+      DynamicUser = lib.mkForce false;
+
+      # The module only adds a restart policy to the model loader, not the
+      # server itself; a crash currently leaves Ollama down until the next
+      # boot.
       Restart = "on-failure";
       RestartSec = "5s";
     };
 
+    # One-time relocation of the state directory created while the service
+    # ran with DynamicUser: /var/lib/ollama is a symlink into the
+    # root-only /var/lib/private. Runs as root before Ollama starts; the
+    # condition makes it a no-op once the directory has been relocated.
+    systemd.services.ollama-fixup-state-dir = lib.mkIf ollama.enable {
+      description = "Relocate the Ollama state directory out of /var/lib/private";
+      wantedBy = [ "multi-user.target" ];
+      before = [
+        "ollama.service"
+        "ollama-migrate-models.service"
+      ];
+      unitConfig.ConditionPathIsSymbolicLink = "/var/lib/ollama";
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = pkgs.writeShellScript "ollama-fixup-state-dir" ''
+          set -eu
+          target=$(readlink /var/lib/ollama)
+          case "$target" in
+            private/ollama | /var/lib/private/ollama)
+              rm /var/lib/ollama
+              mv /var/lib/private/ollama /var/lib/ollama
+              chown -R ollama:ollama /var/lib/ollama
+              ;;
+            *)
+              echo "/var/lib/ollama points at $target, leaving it alone"
+              ;;
+          esac
+        '';
+      };
+    };
+
     # The old Home Manager module ran Ollama as a user service and kept its
-    # models in ~/.ollama. Move that store instead of re-downloading it.
+    # models in ~/.ollama. Merge that store instead of re-downloading it:
+    # /var/lib/ollama/models may already hold models, and blobs are
+    # content-addressed, so duplicates can simply be dropped.
     systemd.services.ollama-migrate-models = lib.mkIf (ollama.enable && ollama.legacyModelDir != null) {
-      description = "Move the legacy per-user Ollama model store";
+      description = "Merge the legacy per-user Ollama model store";
       wantedBy = [ "multi-user.target" ];
       before = [ "ollama.service" ];
       unitConfig.ConditionPathExists = ollama.legacyModelDir;
@@ -128,11 +231,26 @@ in
           set -eu
           legacy=${lib.escapeShellArg ollama.legacyModelDir}
           legacyHome=$(dirname "$legacy")
+          target=/var/lib/ollama/models
 
-          install -d -o ollama -g ollama /var/lib/ollama
-          if [ ! -e /var/lib/ollama/models ]; then
-            mv "$legacy" /var/lib/ollama/models
-          fi
+          install -d -o ollama -g ollama "$target"
+          cd "$legacy"
+          # Depth-first: files are moved (or dropped when already present)
+          # before their directories are visited, so each rmdir succeeds and
+          # the legacy tree disappears once it is fully merged.
+          find . -depth -mindepth 1 | while read -r p; do
+            if [ -d "$p" ]; then
+              install -d -o ollama -g ollama "$target/$p"
+              rmdir "$p" 2>/dev/null || true
+            elif [ -e "$target/$p" ]; then
+              rm -f "$p"
+            else
+              mv "$p" "$target/$p"
+            fi
+          done
+          cd /
+          rmdir "$legacy" 2>/dev/null || true
+
           if [ -f "$legacyHome/id_ed25519" ] && [ ! -e /var/lib/ollama/.ollama/id_ed25519 ]; then
             install -D -o ollama -g ollama "$legacyHome/id_ed25519" /var/lib/ollama/.ollama/id_ed25519
           fi
