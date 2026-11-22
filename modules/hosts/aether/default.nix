@@ -9,4 +9,10 @@
     # Ollama service. Remove this line after the first successful rebuild.
     ollama.legacyModelDir = "/home/timj/.ollama/models";
   };
+
+  services.herdr = {
+    enable = true;
+    # Reachable via the Tailscale tailnet (tailscale is enabled above).
+    tailnet.enable = true;
+  };
 }

@@ -7,17 +7,27 @@
 }:
 {
   imports = [
-    ./modules/terminal/terminal.nix
-    ./modules/gaming/gaming.nix
-    ./modules/music/music.nix
-    ./modules/ai
-    ./modules/noctalia/home.nix
+    ./modules/home/terminal/terminal.nix
+    ./modules/home/gaming/gaming.nix
+    ./modules/home/music/music.nix
+    ./modules/home/opencode
+    ./modules/home/ai
+    ./modules/home/herdr
+    ./modules/home/noctalia/home.nix
+    ./modules/home/super-productivity
   ];
 
   home.username = "timj";
   home.homeDirectory = "/home/timj";
 
   home.stateVersion = "24.11"; # do not modify with checking upgrade notes
+
+  programs.herdr.enable = true;
+
+  programs.super-productivity = {
+    enable = true;
+    mcp.enable = true;
+  };
 
   # https://nix-community.github.io/home-manager/index.xhtml#sec-usage-gpu-non-nixos
   #  nixGL.packages = import <nixgl> { inherit pkgs; };
@@ -114,36 +124,38 @@
   programs.home-manager.enable = true;
   # explicitly defined list of "unfree" packages to be allowed to be installed
 
-  services.swayidle = let
+  services.swayidle =
+    let
       lock = "${pkgs.swaylock}/bin/swaylock -c 000000 --daemonize";
       display = status: "${pkgs.niri}/bin/niri msg action power-${status}-monitors";
-    in {
-    enable = true;
-    timeouts = [
-      {
-        timeout = 270;
-        command = "${pkgs.libnotify}/bin/notify-send 'Locking in 30 seconds' -t 5000";
-      }
-      {
-        timeout = 300;
-        command = lock;
-      }
-    ];
-    events = [
-      {
-        event = "before-sleep";
-        command = lock;
-      }
-      {
-        event = "after-resume";
-        command = display "on";
-      }
-      {
-        event = "unlock";
-        command = display "on";
-      }
-    ];
-  };
+    in
+    {
+      enable = true;
+      timeouts = [
+        {
+          timeout = 270;
+          command = "${pkgs.libnotify}/bin/notify-send 'Locking in 30 seconds' -t 5000";
+        }
+        {
+          timeout = 300;
+          command = lock;
+        }
+      ];
+      events = [
+        {
+          event = "before-sleep";
+          command = lock;
+        }
+        {
+          event = "after-resume";
+          command = display "on";
+        }
+        {
+          event = "unlock";
+          command = display "on";
+        }
+      ];
+    };
 
   nixpkgs.config.allowUnfreePackages = [
     "obsidian"

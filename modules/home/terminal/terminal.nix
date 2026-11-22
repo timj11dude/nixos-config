@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 let
-  pins = import ../../pins.nix;
+  pins = import ../../../pins.nix;
 in {
 
   home.packages = with pkgs; [

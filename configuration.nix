@@ -23,11 +23,12 @@ in {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ./modules/backups/restic
-    ./modules/gaming
-    ./modules/ai/nixos.nix
-    ./modules/noctalia
-    ./hosts/aether/aether.nix
+    ./modules/system/backups/restic
+    ./modules/system/gaming
+    ./modules/system/ai
+    ./modules/system/herdr
+    ./modules/system/noctalia
+    ./modules/hosts/aether
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     ./disko.nix
     "${builtins.fetchTarball {
