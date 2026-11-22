@@ -18,7 +18,10 @@ let
       "TB"=4;
     };
    in size: (unit: size * (pow 1024 m."${unit}"));
-   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-26.05.tar.gz";
+   home-manager = builtins.fetchTarball {
+     url = "https://github.com/nix-community/home-manager/archive/release-26.05.tar.gz";
+     sha256 = "0x0dcasjli38yabl1dpq4ymg7ixv02hd825676irw5cir8z0r2jx";
+   };
 in {
   imports = [
     # Include the results of the hardware scan.
@@ -29,7 +32,10 @@ in {
     ./modules/system/herdr
     ./modules/system/noctalia
     ./modules/hosts/aether
-    "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
+    "${builtins.fetchTarball {
+      url = "https://github.com/nix-community/disko/archive/master.tar.gz";
+      sha256 = "1f2wsz31rf4sqg7spsjnq82c97gicn8zxlnj2zjsmm5g1pcnfzhg";
+    }}/module.nix"
     ./disko.nix
     "${builtins.fetchTarball {
       url = "https://github.com/Mic92/sops-nix/archive/cff8437c5fe8c68fc3a840a21bf1f4dc801da40d.tar.gz";

@@ -141,20 +141,11 @@
           command = lock;
         }
       ];
-      events = [
-        {
-          event = "before-sleep";
-          command = lock;
-        }
-        {
-          event = "after-resume";
-          command = display "on";
-        }
-        {
-          event = "unlock";
-          command = display "on";
-        }
-      ];
+      events = {
+        before-sleep = lock;
+        after-resume = display "on";
+        unlock = display "on";
+      };
     };
 
   nixpkgs.config.allowUnfreePackages = [

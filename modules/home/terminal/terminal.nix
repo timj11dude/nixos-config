@@ -61,6 +61,7 @@ in {
       tree = "ls --tree";
       td = "cd $(mktemp -d)";
       gw = "./gradlew";
+      nixos-rebuild-here = "/home/timj/Projects/github.com:timj11dude/nixos-config/rebuild.sh switch";
       # only really required whilst we have pacman
       lsi = ''expac -H M "%011m	%-20n	%10d" $(comm -23 <(pacman -Qqen | sort) <({ pacman -Qqg xorg; expac -l n %E base; } | sort -u)) | sort -n'';
     };
