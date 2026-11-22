@@ -23,12 +23,39 @@ let
 
     # The published tarball has no lockfile. The checked-in lockfile pins only
     # the two runtime dependencies; peer dependencies come from OpenCode.
+    # The replacement manifest must keep the published `exports`/`main` fields:
+    # OpenCode discovers the plugin's parts (server, TUI, GUI) through them.
     postPatch = ''
       cat > package.json <<'EOF'
       {
         "name": "@slkiser/opencode-quota",
         "version": "${quotaVersion}",
         "type": "module",
+        "main": "./dist/index.js",
+        "types": "./dist/index.d.ts",
+        "bin": {
+          "opencode-quota": "./dist/bin/opencode-quota.js"
+        },
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+          },
+          "./server": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+          },
+          "./tui": {
+            "types": "./dist/tui.d.ts",
+            "default": "./dist/tui.js"
+          },
+          "./gui-experimental": "./dist/gui-experimental.cjs"
+        },
+        "files": [
+          "dist",
+          "README.md",
+          "LICENSE"
+        ],
         "dependencies": {
           "@opentelemetry/api": "~1.9.1",
           "jsonc-parser": "^3.3.1"
@@ -45,6 +72,8 @@ let
       runHook preInstall
       mkdir -p $out/lib/node_modules/@slkiser/opencode-quota
       cp -r . $out/lib/node_modules/@slkiser/opencode-quota/
+      cp ${quotaIndexShim} $out/lib/node_modules/@slkiser/opencode-quota/index.js
+      cp ${quotaTuiShim} $out/lib/node_modules/@slkiser/opencode-quota/tui.js
       runHook postInstall
     '';
 
@@ -55,6 +84,18 @@ let
       platforms = platforms.all;
     };
   };
+
+  # OpenCode 2.1.x discovers the parts of a local plugin directory only by
+  # conventional root file names (server/index, tui, rpc) and does not read
+  # package.json exports (newer releases do). Root shims keep the plugin
+  # loadable as a bare store path on both.
+  quotaIndexShim = pkgs.writeText "opencode-quota-index.js" ''
+    export * from "./dist/index.js";
+    export { default } from "./dist/index.js";
+  '';
+  quotaTuiShim = pkgs.writeText "opencode-quota-tui.js" ''
+    export { default } from "./dist/tui.js";
+  '';
 
   jsonFormat = pkgs.formats.json { };
 in
