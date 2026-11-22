@@ -10,6 +10,7 @@
     ./modules/home/terminal/terminal.nix
     ./modules/home/gaming/gaming.nix
     ./modules/home/music/music.nix
+    ./modules/home/opencode
     ./modules/home/ai
     ./modules/home/herdr
     ./modules/home/noctalia/home.nix
@@ -23,7 +24,10 @@
 
   programs.herdr.enable = true;
 
-  programs.super-productivity.enable = true;
+  programs.super-productivity = {
+    enable = true;
+    mcp.enable = true;
+  };
 
   # https://nix-community.github.io/home-manager/index.xhtml#sec-usage-gpu-non-nixos
   #  nixGL.packages = import <nixgl> { inherit pkgs; };
