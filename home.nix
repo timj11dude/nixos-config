@@ -8,6 +8,7 @@
 {
   imports = [
     ./modules/home/terminal/terminal.nix
+    ./modules/home/zellij
     ./modules/home/gaming/gaming.nix
     ./modules/home/music/music.nix
     ./modules/home/opencode
