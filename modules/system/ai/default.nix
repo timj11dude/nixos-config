@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.ai;
-  ollama = cfg.ollama;
+  inherit (cfg) ollama;
 in
 {
   options.ai = {
@@ -125,20 +125,6 @@ in
           the last free megabytes.
         '';
       };
-
-      legacyModelDir = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        example = "/home/timj/.ollama/models";
-        description = ''
-          One-time migration source for models previously stored by the
-          Home Manager Ollama service.
-
-          If set and the directory exists, it is moved to the system model
-          store (`/var/lib/ollama/models`) before Ollama starts. Remove this
-          option once the migration has happened.
-        '';
-      };
     };
   };
 
@@ -149,8 +135,7 @@ in
       user = "ollama";
       group = "ollama";
       home = "/var/lib/ollama";
-      host = ollama.host;
-      port = ollama.port;
+      inherit (ollama) host port;
       openFirewall = ollama.host != "127.0.0.1" && ollama.host != "::1";
       loadModels = ollama.models;
       environmentVariables = {
@@ -168,94 +153,49 @@ in
       };
     };
 
-    systemd.services.ollama.serviceConfig = lib.mkIf ollama.enable {
-      # The nixpkgs module runs the service with systemd DynamicUser, which
-      # stores the state directory under /var/lib/private (0700, root-owned).
-      # Combined with the static `ollama` user that path is not traversable
-      # and the server refuses to start ("mkdir /var/lib/ollama/models/blobs:
-      # permission denied: ensure path elements are traversable").
-      DynamicUser = lib.mkForce false;
+    systemd.services = {
+      ollama.serviceConfig = lib.mkIf ollama.enable {
+        # The nixpkgs module runs the service with systemd DynamicUser, which
+        # stores the state directory under /var/lib/private (0700, root-owned).
+        # Combined with the static `ollama` user that path is not traversable
+        # and the server refuses to start ("mkdir /var/lib/ollama/models/blobs:
+        # permission denied: ensure path elements are traversable").
+        DynamicUser = lib.mkForce false;
 
-      # The module only adds a restart policy to the model loader, not the
-      # server itself; a crash currently leaves Ollama down until the next
-      # boot.
-      Restart = "on-failure";
-      RestartSec = "5s";
-    };
-
-    # One-time relocation of the state directory created while the service
-    # ran with DynamicUser: /var/lib/ollama is a symlink into the
-    # root-only /var/lib/private. Runs as root before Ollama starts; the
-    # condition makes it a no-op once the directory has been relocated.
-    systemd.services.ollama-fixup-state-dir = lib.mkIf ollama.enable {
-      description = "Relocate the Ollama state directory out of /var/lib/private";
-      wantedBy = [ "multi-user.target" ];
-      before = [
-        "ollama.service"
-        "ollama-migrate-models.service"
-      ];
-      unitConfig.ConditionPathIsSymbolicLink = "/var/lib/ollama";
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = pkgs.writeShellScript "ollama-fixup-state-dir" ''
-          set -eu
-          target=$(readlink /var/lib/ollama)
-          case "$target" in
-            private/ollama | /var/lib/private/ollama)
-              rm /var/lib/ollama
-              mv /var/lib/private/ollama /var/lib/ollama
-              chown -R ollama:ollama /var/lib/ollama
-              ;;
-            *)
-              echo "/var/lib/ollama points at $target, leaving it alone"
-              ;;
-          esac
-        '';
+        # The module only adds a restart policy to the model loader, not the
+        # server itself; a crash currently leaves Ollama down until the next
+        # boot.
+        Restart = "on-failure";
+        RestartSec = "5s";
       };
-    };
 
-    # The old Home Manager module ran Ollama as a user service and kept its
-    # models in ~/.ollama. Merge that store instead of re-downloading it:
-    # /var/lib/ollama/models may already hold models, and blobs are
-    # content-addressed, so duplicates can simply be dropped.
-    systemd.services.ollama-migrate-models = lib.mkIf (ollama.enable && ollama.legacyModelDir != null) {
-      description = "Merge the legacy per-user Ollama model store";
-      wantedBy = [ "multi-user.target" ];
-      before = [ "ollama.service" ];
-      unitConfig.ConditionPathExists = ollama.legacyModelDir;
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = pkgs.writeShellScript "ollama-migrate-models" ''
-          set -eu
-          legacy=${lib.escapeShellArg ollama.legacyModelDir}
-          legacyHome=$(dirname "$legacy")
-          target=/var/lib/ollama/models
-
-          install -d -o ollama -g ollama "$target"
-          cd "$legacy"
-          # Depth-first: files are moved (or dropped when already present)
-          # before their directories are visited, so each rmdir succeeds and
-          # the legacy tree disappears once it is fully merged.
-          find . -depth -mindepth 1 | while read -r p; do
-            if [ -d "$p" ]; then
-              install -d -o ollama -g ollama "$target/$p"
-              rmdir "$p" 2>/dev/null || true
-            elif [ -e "$target/$p" ]; then
-              rm -f "$p"
-            else
-              mv "$p" "$target/$p"
-            fi
-          done
-          cd /
-          rmdir "$legacy" 2>/dev/null || true
-
-          if [ -f "$legacyHome/id_ed25519" ] && [ ! -e /var/lib/ollama/.ollama/id_ed25519 ]; then
-            install -D -o ollama -g ollama "$legacyHome/id_ed25519" /var/lib/ollama/.ollama/id_ed25519
-          fi
-          chown -R ollama:ollama /var/lib/ollama
-        '';
+      # One-time relocation of the state directory created while the service
+      # ran with DynamicUser: /var/lib/ollama is a symlink into the
+      # root-only /var/lib/private. Runs as root before Ollama starts; the
+      # condition makes it a no-op once the directory has been relocated.
+      ollama-fixup-state-dir = lib.mkIf ollama.enable {
+        description = "Relocate the Ollama state directory out of /var/lib/private";
+        wantedBy = [ "multi-user.target" ];
+        before = [ "ollama.service" ];
+        unitConfig.ConditionPathIsSymbolicLink = "/var/lib/ollama";
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          ExecStart = pkgs.writeShellScript "ollama-fixup-state-dir" ''
+            set -eu
+            target=$(readlink /var/lib/ollama)
+            case "$target" in
+              private/ollama | /var/lib/private/ollama)
+                rm /var/lib/ollama
+                mv /var/lib/private/ollama /var/lib/ollama
+                chown -R ollama:ollama /var/lib/ollama
+                ;;
+              *)
+                echo "/var/lib/ollama points at $target, leaving it alone"
+                ;;
+            esac
+          '';
+        };
       };
     };
   };

@@ -46,7 +46,8 @@
   pipewire,
   wayland,
 
-  # `orca serve` and the computer-use surface shell out to these.
+  # Orca (GitHub integration, `orca serve`, and computer-use) shells out to these.
+  gh,
   git,
   coreutils,
   openssh,
@@ -89,6 +90,7 @@ let
 
   runtimeTools = [
     coreutils
+    gh
     git
     # Antigravity native-chat auth probes the Linux keyring via gdbus + secret-tool.
     glib.bin

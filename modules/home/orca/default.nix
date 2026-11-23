@@ -2,11 +2,10 @@
   config,
   pkgs,
   lib,
+  pins ? import ../../../pins.nix,
   ...
 }:
 let
-  pins = import ../../../pins.nix;
-
   cfg = config.programs.orca;
 
   # Append the configured agent CLIs to the wrapper PATH so the desktop app and
@@ -44,6 +43,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ package ] ++ cfg.agents;
+    # Install `gh` into the user profile alongside the agent CLIs so interactive
+    # `gh auth login` works from any shell; it is also in Orca's wrapper PATH.
+    home.packages = [
+      package
+      pkgs.gh
+    ]
+    ++ cfg.agents;
   };
 }

@@ -8,7 +8,7 @@ a per-user program:
 
 | File | Loaded by | Manages |
 | --- | --- | --- |
-| `modules/system/ai/default.nix` | `configuration.nix` | `services.ollama`, model pulling, model-store migration |
+| `modules/system/ai/default.nix` | `configuration.nix` | `services.ollama`, model pulling |
 | `default.nix` | `home.nix` | `programs.opencode`, provider and model config |
 
 ## Enable it
@@ -16,10 +16,7 @@ a per-user program:
 The options live in the host configuration:
 
 ```nix
-ai = {
-  enable = true;
-  ollama.legacyModelDir = "/home/<user>/.ollama/models";
-};
+ai.enable = true;
 ```
 
 `ai.ollama.enable` and `ai.opencode.enable` both default to `true` when
@@ -51,26 +48,14 @@ starts; deleting a model from that list does **not** delete it from disk.
 
 A fresh install of the current list downloads around 35 GB on first boot.
 
-### One-time migration
+### State directory fixup
 
-`ai.ollama.legacyModelDir` points at the store used by the old Home Manager
-service. When set, `ollama-migrate-models.service` merges it into
-`/var/lib/ollama/models` (and copies the registry key) before Ollama starts, so
-the existing models do not need re-downloading. Blobs are content-addressed,
-so entries already present at the target are simply dropped from the legacy
-tree. Once the legacy directory is gone, remove the option from the host
-config.
-
-A second one-shot, `ollama-fixup-state-dir.service`, repairs the state
-directory left behind by nixpkgs' `DynamicUser` setup: `/var/lib/ollama` used
-to be a symlink into the root-only `/var/lib/private`, which the static
-`ollama` user cannot traverse ("permission denied: ensure path elements are
-traversable"). The module pins `DynamicUser=false`; the fixup moves the real
-directory back to `/var/lib/ollama` once and is a no-op afterwards.
-
-Models left in the migrated store that are no longer in `ai.ollama.models` stay
-on disk. Remove them with `ollama rm <model>` to reclaim space, or add them back
-to `ai.ollama.models` and the provider list.
+`ollama-fixup-state-dir.service` repairs the state directory left behind by
+nixpkgs' `DynamicUser` setup: `/var/lib/ollama` used to be a symlink into the
+root-only `/var/lib/private`, which the static `ollama` user cannot traverse
+("permission denied: ensure path elements are traversable"). The module pins
+`DynamicUser=false`; the fixup moves the real directory back to
+`/var/lib/ollama` once and is a no-op afterwards.
 
 ### VRAM
 

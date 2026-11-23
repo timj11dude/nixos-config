@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.programs.herdr;
+  tomlFormat = pkgs.formats.toml { };
 in
 {
   options.programs.herdr = {
@@ -51,31 +52,37 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.file.".config/herdr/config.toml".text = ''
-      onboarding = false
+    xdg.configFile."herdr/config.toml".source = tomlFormat.generate "herdr-config.toml" {
+      onboarding = false;
 
-      [terminal]
-      default_shell = "${cfg.shell}"
-      shell_mode = "login"
-      new_cwd = "follow"
+      terminal = {
+        default_shell = cfg.shell;
+        shell_mode = "login";
+        new_cwd = "follow";
+      };
 
-      [theme]
-      name = "${cfg.theme}"
-      auto_switch = false
+      theme = {
+        name = cfg.theme;
+        auto_switch = false;
+      };
 
-      [session]
-      resume_agents_on_restore = ${toString cfg.resumeAgents}
-      startup_per_agent_delay_ms = 100
+      session = {
+        resume_agents_on_restore = cfg.resumeAgents;
+        startup_per_agent_delay_ms = 100;
+      };
 
-      [remote]
-      manage_ssh_config = true
+      remote = {
+        manage_ssh_config = true;
+      };
 
-      [worktrees]
-      directory = "${cfg.worktreeDirectory}"
+      worktrees = {
+        directory = cfg.worktreeDirectory;
+      };
 
-      [ui.toast]
-      delivery = "herdr"
-      delay_seconds = 1
-    '';
+      ui.toast = {
+        delivery = "herdr";
+        delay_seconds = 1;
+      };
+    };
   };
 }

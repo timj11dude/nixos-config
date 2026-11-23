@@ -1,13 +1,16 @@
 {
   config,
   lib,
+  osConfig ? { },
+  pins ? import ../../../pins.nix,
   ...
 }:
 let
-  pins = import ../../../pins.nix;
   pkgs = pins.unstablePkgs;
 
   cfg = config.home.opencode;
+  ollamaHost = osConfig.ai.ollama.host or "127.0.0.1";
+  ollamaPort = osConfig.ai.ollama.port or 11434;
 
   # The plugin is published to npm but not packaged in nixpkgs. Build it from
   # the pinned tarball so the whole setup stays reproducible and offline.
@@ -167,7 +170,7 @@ in
       };
 
       settings = lib.mkOption {
-        type = jsonFormat.type;
+        inherit (jsonFormat) type;
         default = { };
         description = ''
           Settings written to opencode-quota/settings.jsonc in OpenCode's
@@ -187,7 +190,7 @@ in
         # The package is managed by Nix; update checks would only suggest
         # `opencode upgrade`, which cannot write to the store.
         autoupdate = false;
-        model = cfg.model;
+        inherit (cfg) model;
         small_model = cfg.smallModel;
 
         plugins = lib.optional cfg.quota.enable "${cfg.quota.package}/lib/node_modules/@slkiser/opencode-quota";
@@ -196,7 +199,7 @@ in
           npm = "@ai-sdk/openai-compatible";
           name = "Ollama (local)";
           options = {
-            baseURL = "http://127.0.0.1:11434/v1";
+            baseURL = "http://${ollamaHost}:${toString ollamaPort}/v1";
             chunkTimeout = 60000;
           };
           inherit (config.ai) models;
@@ -208,52 +211,52 @@ in
         ];
         lsp = true;
         agents.ask = {
-            description = "Read-only research and Q&A. Never modifies files.";
-            mode = "primary";
-            color = "#51cf66";
-            system = ''
-              You are in ask mode. Answer questions and research topics using the codebase and the web.
-              Never edit, create, or delete files. Cite file paths and line numbers or URLs for your claims.
-              If a change is needed, describe it instead of making it.
-            '';
-            permissions = [
-              {
-                action = "*";
-                resource = "*";
-                effect = "deny";
-              }
-              {
-                action = "read";
-                resource = "*";
-                effect = "allow";
-              }
-              {
-                action = "glob";
-                resource = "*";
-                effect = "allow";
-              }
-              {
-                action = "grep";
-                resource = "*";
-                effect = "allow";
-              }
-              {
-                action = "webfetch";
-                resource = "*";
-                effect = "allow";
-              }
-              {
-                action = "websearch";
-                resource = "*";
-                effect = "allow";
-              }
-              {
-                action = "shell";
-                resource = "*";
-                effect = "ask";
-              }
-            ];
-          };
+          description = "Read-only research and Q&A. Never modifies files.";
+          mode = "primary";
+          color = "#51cf66";
+          system = ''
+            You are in ask mode. Answer questions and research topics using the codebase and the web.
+            Never edit, create, or delete files. Cite file paths and line numbers or URLs for your claims.
+            If a change is needed, describe it instead of making it.
+          '';
+          permissions = [
+            {
+              action = "*";
+              resource = "*";
+              effect = "deny";
+            }
+            {
+              action = "read";
+              resource = "*";
+              effect = "allow";
+            }
+            {
+              action = "glob";
+              resource = "*";
+              effect = "allow";
+            }
+            {
+              action = "grep";
+              resource = "*";
+              effect = "allow";
+            }
+            {
+              action = "webfetch";
+              resource = "*";
+              effect = "allow";
+            }
+            {
+              action = "websearch";
+              resource = "*";
+              effect = "allow";
+            }
+            {
+              action = "shell";
+              resource = "*";
+              effect = "ask";
+            }
+          ];
+        };
       };
 
       tui = {

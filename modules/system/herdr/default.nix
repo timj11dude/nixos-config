@@ -83,9 +83,11 @@ in
       };
     };
 
-    # Open the Herdr port when reachable via the tailnet is requested.
-    networking.firewall = lib.mkIf (cfg.tailnet.enable && config.services.tailscale.enable) {
-      allowedTCPPorts = [ cfg.port ];
-    };
+    # Open the Herdr port only on the Tailscale interface when tailnet access is requested.
+    networking.firewall.interfaces.${config.services.tailscale.interfaceName} =
+      lib.mkIf (cfg.tailnet.enable && config.services.tailscale.enable)
+        {
+          allowedTCPPorts = [ cfg.port ];
+        };
   };
 }

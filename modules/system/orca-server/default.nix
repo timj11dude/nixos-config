@@ -2,11 +2,10 @@
   config,
   pkgs,
   lib,
+  pins,
   ...
 }:
 let
-  pins = import ../../../pins.nix;
-
   cfg = config.services.orca-server;
 
   # Append the configured agent CLIs to the wrapper PATH so the systemd
@@ -123,7 +122,13 @@ in
       }
     ];
 
-    environment.systemPackages = [ package ] ++ cfg.agents;
+    # Include `gh` system-wide for interactive `gh auth login`; it is also in
+    # Orca's wrapper PATH for systemd.
+    environment.systemPackages = [
+      package
+      pkgs.gh
+    ]
+    ++ cfg.agents;
 
     systemd.services.orca-server = {
       description = "Orca headless server";
@@ -162,8 +167,10 @@ in
       };
     };
 
-    networking.firewall = lib.mkIf (cfg.tailnet.enable && config.services.tailscale.enable) {
-      allowedTCPPorts = [ cfg.port ];
-    };
+    networking.firewall.interfaces.${config.services.tailscale.interfaceName} =
+      lib.mkIf (cfg.tailnet.enable && config.services.tailscale.enable)
+        {
+          allowedTCPPorts = [ cfg.port ];
+        };
   };
 }

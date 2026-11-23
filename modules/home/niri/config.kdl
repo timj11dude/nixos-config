@@ -280,7 +280,7 @@ binds {
     Mod+T repeat=false hotkey-overlay-title="Open a Terminal: Ghostty" { spawn "ghostty"; }
     Mod+Shift+T repeat=false hotkey-overlay-title="Open a Floating Terminal: Ghostty" { spawn "ghostty" "--class=com.mitchellh.ghostty.floating"; }
     Mod+D hotkey-overlay-title="Launcher" { spawn "rofi" "-show" "drun"; }
-    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+    Super+Alt+L hotkey-overlay-title="Lock the Screen" { spawn "noctalia" "msg" "session" "lock"; }
 
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.

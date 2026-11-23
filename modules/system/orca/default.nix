@@ -39,8 +39,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    networking.firewall = lib.mkIf (cfg.tailnet.enable && config.services.tailscale.enable) {
-      allowedTCPPorts = [ cfg.port ];
-    };
+    networking.firewall.interfaces.${config.services.tailscale.interfaceName} =
+      lib.mkIf (cfg.tailnet.enable && config.services.tailscale.enable)
+        {
+          allowedTCPPorts = [ cfg.port ];
+        };
   };
 }

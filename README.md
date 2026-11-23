@@ -50,9 +50,10 @@ Note: some modules in this config reference Linux-specific paths (e.g. `/home/ti
 
 ## Checks
 
-Run `./check.sh` before rebuilding (it is also invoked by `rebuild.sh`).
-It parses every Nix file, evaluates the full system configuration, and
-formatting-checks the AI module.
+Run `./check.sh` before rebuilding. It parses every Nix file, evaluates the
+full system configuration, checks `nixfmt` formatting across the repository,
+and runs `statix` and `deadnix` lint checks. Run `./nixfmt.sh` to auto-format
+all Nix files.
 
 ## TODO
 Tracking what parts of my existing setup I would like to manage with `home-manager`,
