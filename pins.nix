@@ -8,16 +8,25 @@
 #
 # then bump `rev` and `sha256` below.
 let
-  rev = "31ecbaca1bdefa45dffc409f0250bd8039ea0010";
+  rev = "2786a2a72088ecf32aea5b3ec52099e6a7cff78f";
 
   nixpkgs = builtins.fetchTarball {
     url = "https://github.com/NixOS/nixpkgs/archive/${rev}.tar.gz";
-    sha256 = "1lzqyss0pznfh3az0llsp4a7c8gqcyq8wf96fnl5cnh5b3lic6kn";
+    sha256 = "0fm3lxj743j3ksdhs31lb2sn9bkix3kvam2qb4hc8ipr2yzmbxbz";
   };
 in
 {
   inherit rev nixpkgs;
 
   # The pinned package set used by the modules that need newer packages.
-  unstablePkgs = import nixpkgs { };
+  # claude-code and antigravity-cli are unfree; allow them for
+  # programs.orca.agents.
+  unstablePkgs = import nixpkgs {
+    config.allowUnfreePredicate =
+      pkg:
+      builtins.elem (pkg.pname or "") [
+        "claude-code"
+        "antigravity-cli"
+      ];
+  };
 }

@@ -30,6 +30,8 @@ in {
     ./modules/system/gaming
     ./modules/system/ai
     ./modules/system/herdr
+    ./modules/system/orca
+    ./modules/system/orca-server
     ./modules/system/noctalia
     ./modules/hosts/aether
     "${builtins.fetchTarball {

@@ -16,6 +16,7 @@
     ./modules/home/herdr
     ./modules/home/noctalia/home.nix
     ./modules/home/super-productivity
+    ./modules/home/orca
   ];
 
   home.username = "timj";
@@ -24,6 +25,8 @@
   home.stateVersion = "24.11"; # do not modify with checking upgrade notes
 
   programs.herdr.enable = true;
+
+  programs.orca.enable = true;
 
   programs.super-productivity = {
     enable = true;

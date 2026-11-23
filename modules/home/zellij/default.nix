@@ -38,8 +38,8 @@ in
   programs.zellij = {
     enable = true;
 
-    # Auto-start a new zellij session in every interactive zsh.
-    enableZshIntegration = true;
+    # Do not auto-start zellij in interactive zsh shells; launch it manually.
+    enableZshIntegration = false;
 
     settings = {
       theme = "catppuccin-mocha";

@@ -12,6 +12,6 @@ echo "==> Evaluating the system configuration"
 nix-instantiate '<nixpkgs/nixos>' -A system --arg configuration ./configuration.nix > /dev/null
 
 echo "==> Checking formatting of the AI module"
-nixfmt --check pins.nix modules/home/ai/*.nix modules/home/herdr/*.nix modules/system/ai/*.nix modules/system/herdr/*.nix
+nixfmt --check pins.nix modules/home/ai/*.nix modules/home/herdr/*.nix modules/home/orca/*.nix modules/system/ai/*.nix modules/system/herdr/*.nix modules/system/orca/*.nix modules/system/orca-server/*.nix
 
 echo "OK"

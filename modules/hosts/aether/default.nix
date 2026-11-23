@@ -15,4 +15,12 @@
     # Reachable via the Tailscale tailnet (tailscale is enabled above).
     tailnet.enable = true;
   };
+
+  services.orca-ide = {
+    enable = true;
+    # Opens the Orca port on the tailnet for paired clients. The desktop app
+    # keeps its own "Advertise this app as a server" toggle; services.orca-server
+    # stays disabled so the two are not run together.
+    tailnet.enable = true;
+  };
 }
