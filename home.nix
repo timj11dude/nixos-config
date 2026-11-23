@@ -14,6 +14,7 @@
     ./modules/home/opencode
     ./modules/home/ai
     ./modules/home/herdr
+    ./modules/home/niri
     ./modules/home/noctalia/home.nix
     ./modules/home/super-productivity
     ./modules/home/orca
