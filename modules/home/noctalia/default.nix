@@ -38,6 +38,7 @@
         behavior_order = lib.mkDefault [
           "lock-warning"
           "lock"
+          "screen-off"
         ];
         behavior = {
           lock-warning = {
@@ -50,6 +51,12 @@
             enabled = lib.mkDefault true;
             timeout = lib.mkDefault 300;
             action = lib.mkDefault "lock";
+          };
+          screen-off = {
+            enabled = lib.mkDefault true;
+            timeout = lib.mkDefault 330;
+            locked_timeout = lib.mkDefault 30;
+            action = lib.mkDefault "screen_off";
           };
         };
       };
