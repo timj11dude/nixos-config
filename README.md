@@ -1,16 +1,11 @@
 # nixos-config
-Personal NixOS and Nix home-manager configuration
+Personal NixOS and Home Manager configuration for host `aether`.
 
-## Nix Home Manager
+## Architecture & Deployment
 
-A utility for adopting Nix onto an existing non-NixOS system.
-
-Provide functionality for being able to reproduce the entire home user setup from a single source of truth.
-
-Combines the installation and management of any user request packages, with setup and configuration.
-Covering all types of programs, configurations and user services.
-
-This project should be clone into `~/.config/home-manager`
+- **System & User Config:** `configuration.nix` manages system-level NixOS configuration and imports Home Manager as a NixOS module (`<home-manager/nixos>` via `home-manager.users.timj = ./home.nix`), providing a single source of truth for system services, user packages, dotfiles, and user services.
+- **Deployment:** Configuration files are synced into `/etc/nixos/` and applied with `./rebuild.sh` (compare live state with `./diff.sh`).
+- **Agent & Contributor Docs:** See [`AGENTS.md`](./AGENTS.md) for workflows, conventions, and guardrails, and [`GLOSSARY.md`](./GLOSSARY.md) for hostnames, storage mounts, scripts, and project terminology.
 
 ## TODO
 Tracking what parts of my existing setup I would like to manage with `home-manager`,
