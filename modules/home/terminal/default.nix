@@ -15,8 +15,13 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      eza
+      deadnix
       devenv
+      eza
+      nixfmt
+      secretspec
+      statix
+      unzip
     ];
 
     home.file."${config.xdg.dataHome}/gnupg/pinentry.sh" = {
@@ -109,6 +114,8 @@ in
           "*.bak"
         ];
       };
+
+      ripgrep.enable = true;
 
       fzf = {
         enable = true;

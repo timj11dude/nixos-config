@@ -26,7 +26,6 @@
     preferXdgDirectories = true;
 
     packages = with pkgs; [
-      deadnix
       digikam
       feh
       fuzzel
@@ -35,16 +34,11 @@
       jetbrains.idea
       libreoffice
       maim
-      mistral-vibe
       mono
       nemo
-      nixfmt
       obsidian
       qalculate-qt
-      secretspec
-      statix
       swaybg
-      unzip
       vlc
       xclip
       xdotool

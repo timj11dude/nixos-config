@@ -12,3 +12,4 @@ node_modules/
 .gradle/
 build/
 /home/*/Videos/SteamRecordings/
+/home/*/.local/share/bitcoin
