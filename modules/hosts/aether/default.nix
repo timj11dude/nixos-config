@@ -91,7 +91,10 @@
   # Host feature toggles
   ai.enable = true;
 
-  backups.restic.enable = true;
+  backups.restic = {
+    enable = true;
+    googleDrive.enable = true;
+  };
   gaming.enable = true;
   programs.noctalia.enable = true;
 
