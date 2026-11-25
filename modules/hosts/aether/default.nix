@@ -6,8 +6,8 @@
 }:
 {
   imports = [
-    ../../../hardware-configuration.nix
-    ../../../disko.nix
+    ./hardware-configuration.nix
+    ./disko.nix
   ];
 
   networking = {

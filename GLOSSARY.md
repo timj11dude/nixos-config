@@ -25,11 +25,11 @@ Keep entries concise, factual, alphabetically ordered within each section, and f
 
 | Term | Meaning / Role in This Repo | Where Referenced |
 | --- | --- | --- |
-| `ESP` (`/boot`) | 500M EFI System Partition (`EF00`, `vfat`, `umask=0077`) on `nvme_samsung_1`, used by `systemd-boot`. | `disko.nix`, `configuration.nix` |
+| `ESP` (`/boot`) | 500M EFI System Partition (`EF00`, `vfat`, `umask=0077`) on `nvme_samsung_1`, used by `systemd-boot`. | `modules/hosts/aether/disko.nix`, `configuration.nix` |
 | `homeBackup` | Hourly (`*:02`, `Persistent = true`) Restic backup of `/home/timj` excluding patterns in `restic/excludesFile`, stored at `/mnt/jacoserver/timj/restic_backups`. | `configuration.nix`, `restic/excludesFile` |
 | `homeBackupIncludes` | Companion Restic backup job targeting specific paths in `restic/includesFile` (World of Warcraft `_retail_/Interface/AddOns` and `_retail_/WTF` under Steam compatdata). | `configuration.nix`, `restic/includesFile` |
 | `/mnt/jacoserver/{timj,photos,media}` | Systemd-automounted (`noauto`, 60s idle timeout) CIFS mounts from `//192.168.1.177/{private,Photos,Media}`, authenticated via `sops.secrets."truenas/login"`. | `configuration.nix` |
-| `pool` (LVM VG) | Primary LVM volume group spanning 6 physical disks (`nvme_samsung_1`, `nvme_ct_1`, `ssd_samsung_1`, `ssd_samsung_2`, `hdd_wdc_1`, `hdd_st_1`), sliced into 3 LVs: `root` (`100%`, ext4 at `/`), `nix` (`400G`, ext4 `noatime` at `/nix`), and `swap` (`64G`). | `disko.nix` |
+| `pool` (LVM VG) | Primary LVM volume group spanning 6 physical disks (`nvme_samsung_1`, `nvme_ct_1`, `ssd_samsung_1`, `ssd_samsung_2`, `hdd_wdc_1`, `hdd_st_1`), sliced into 3 LVs: `root` (`100%`, ext4 at `/`), `nix` (`400G`, ext4 `noatime` at `/nix`), and `swap` (`64G`). | `modules/hosts/aether/disko.nix` |
 
 ## 4. Repository Modules, Scripts & Legacy Files
 
@@ -47,7 +47,7 @@ Keep entries concise, factual, alphabetically ordered within each section, and f
 
 - **`allowUnfreePredicate`**: Explicit package-name allowlist used instead of `allowUnfree = true`. Maintained separately in `configuration.nix` (system packages) and `home.nix` (Home Manager packages, including packages from `modules/*`).
 - **`asBytes`**: Helper `let`-binding in `configuration.nix` converting `KB`/`MB`/`GB`/`TB` into bytes for `nix.extraOptions` (`min-free` 1 GB, `max-free` 10 GB auto-GC).
-- **`Disko`**: Declarative disk-partitioning NixOS module imported via `builtins.fetchTarball` from `nix-community/disko` `master.tar.gz` (unpinned) and configured in `disko.nix`.
+- **`Disko`**: Declarative disk-partitioning NixOS module imported via `builtins.fetchTarball` from `nix-community/disko` `master.tar.gz` (unpinned) and configured in `modules/hosts/aether/disko.nix`.
 - **`Home Manager` (`<home-manager/nixos>`)**: Integrated as a NixOS module rather than standalone activation; sets `backupFileExtension = "bak"` and loads `./home.nix` for `timj`.
 - **`<nixos-unstable>`**: Secondary Nix channel imported via `import <nixos-unstable> { inherit pkgs; }` for packages needing newer versions than stable (currently `programs.jujutsu.package`).
 - **`sops-nix`**: Secret management module imported from a pinned GitHub tarball (`sha256` verified) in `configuration.nix`; decrypts `secrets/secrets.yaml` into runtime paths (`config.sops.secrets.<name>.path`).
@@ -71,5 +71,5 @@ Keep entries concise, factual, alphabetically ordered within each section, and f
 - **`ESP`**: EFI System Partition (`/boot`).
 - **`HM`**: Home Manager.
 - **`jj`**: Jujutsu VCS (`programs.jujutsu`), configured with `delta` as diff tool.
-- **`LV` / `PV` / `VG`**: Logical Volume / Physical Volume / Volume Group (Linux LVM terms in `disko.nix`).
+- **`LV` / `PV` / `VG`**: Logical Volume / Physical Volume / Volume Group (Linux LVM terms in `modules/hosts/aether/disko.nix`).
 - **`SOPS`**: Secrets OPerationS (`sops-nix` encrypted YAML store).

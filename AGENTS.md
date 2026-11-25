@@ -16,14 +16,14 @@ For hostnames, mounts, hardware identifiers, scripts, and project terminology, s
 | --- | --- | --- |
 | `configuration.nix` | System-level NixOS config: boot (`systemd-boot`), networking, CIFS mounts, X11/i3, NVIDIA, PipeWire, printing/Avahi, SSH, firewall, Restic backups, Steam, `sops-nix`, `autoUpgrade`. | Imports `./hardware-configuration.nix` (host-only), `./disko.nix`, `<home-manager/nixos>`, and fetched `disko` / `sops-nix` tarballs. |
 | `home.nix` | User-level Home Manager config for `timj`: GUI/CLI packages, Firefox, Thunderbird, Rofi, `spotify-player`, `trayscale`, `ollama`, Gradle properties, XDG settings, `i3` config symlinks. | Imports `modules/terminal/terminal.nix` and `modules/gaming/gaming.nix`. |
-| `disko.nix` | Declarative GPT partitioning and LVM layout (6 physical disks -> `pool` VG -> `root`, `nix`, `swap` LVs; 500M ESP on `nvme_samsung_1`). | **High-risk.** Do not modify unless explicitly requested. |
+| `modules/hosts/aether/disko.nix` | Declarative GPT partitioning and LVM layout (6 physical disks -> `pool` VG -> `root`, `nix`, `swap` LVs; 500M ESP on `nvme_samsung_1`). | **High-risk.** Do not modify unless explicitly requested. |
 | `modules/terminal/` | Terminal & dev environment HM module (`terminal.nix`): Ghostty, Zsh (`oh-my-zsh`), Starship, `direnv`, `devenv`, `eza`, `fd`, `fzf`, `btop` (CUDA), Vim, Git (`delta`, GPG signing), Jujutsu (`jj` from unstable), GPG + GPG-agent (SSH support), SSH, IDE pinentry generator. | `git/excludesFile` is active. **`zsh/.zlogin`, `zsh/.zshenv`, `zsh/.zshrc`, and `gnupg/pinentry-ide.sh` are unreferenced legacy files** (see §6). |
 | `modules/gaming/` | Gaming HM module (`gaming.nix`): Lutris (Proton-GE, Wine, Winetricks, linked to system Steam), PrismLauncher, `wowup-cf`. | Unfree package `wowup-cf` is allowlisted in `home.nix`. |
 | `i3/` | `i3_config` and `i3status_config`, linked to `~/.config/i3/config` and `~/.config/i3status/config` via `home.file` in `home.nix`. | Migrated from Manjaro; contains some legacy Manjaro autostart/keybind entries. |
 | `restic/` | `excludesFile` and `includesFile` read directly by `services.restic` in `configuration.nix`. | `includesFile` targets WoW `AddOns` and `WTF` paths. |
 | `secrets/` & `.sops.yaml` | SOPS-encrypted `secrets/secrets.yaml` and `age` creation rules. | **Sensitive.** Never decrypt, log, or commit plaintext secrets. |
 | `rebuild.sh`, `diff.sh`, `nixfmt.sh` | Repo-to-`/etc/nixos/` deployment, diffing, and formatting scripts. | See §3 and §6 for script scope and quirks. |
-| `hardware-configuration.nix` | Machine-generated hardware scan (gitignored). | Lives in `/etc/nixos/hardware-configuration.nix`; absent from clean git checkouts. |
+| `modules/hosts/aether/hardware-configuration.nix` | Machine-generated hardware scan (gitignored). | Lives in `modules/hosts/aether/hardware-configuration.nix`; absent from clean git checkouts. |
 
 ### Where New Configuration Belongs
 
@@ -51,7 +51,7 @@ nixfmt --check <file.nix>
 
 > **`./check.sh` status:** `./check.sh` is the intended pre-merge verification gate, but does **not** exist in the repository yet. Until it is added, run the parse, formatting, and diff checks above.
 >
-> **Worktree evaluation caveat:** Evaluating `./configuration.nix` directly from a git checkout fails because `./hardware-configuration.nix` is gitignored and only exists in `/etc/nixos/`. Full evaluation / `nixos-rebuild dry-build` targets `/etc/nixos/configuration.nix` (after syncing) or requires access to the host's `hardware-configuration.nix`.
+> **Worktree evaluation caveat:** Evaluating `./configuration.nix` directly from a git checkout fails because `modules/hosts/aether/hardware-configuration.nix` is gitignored and only exists locally. Full evaluation / `nixos-rebuild dry-build` requires access to the host's `hardware-configuration.nix`.
 
 ### Formatting
 
@@ -89,7 +89,7 @@ nix-shell -p sops --run "sops secrets/secrets.yaml"
 ## 5. Safety Guardrails (Hard Rules)
 
 1. **No live system mutations without approval:** Never run `./rebuild.sh`, `nixos-rebuild switch|boot|test`, `disko`, or modify/delete anything under `/etc/nixos/`.
-2. **No disk layout edits without explicit request:** Do not edit `disko.nix` unless the task explicitly asks for disk/LVM changes.
+2. **No disk layout edits without explicit request:** Do not edit `modules/hosts/aether/disko.nix` unless the task explicitly asks for disk/LVM changes.
 3. **Zero secret exposure:** Never decrypt, read plaintext, print, log, or commit secrets from `secrets/secrets.yaml`, `/home/timj/.config/sops/age/keys.txt`, `/home/timj/.config/restic/password`, or GPG/SSH keys.
 4. **No generated/local artifacts in Git:** Never edit or stage `hardware-configuration.nix`, `result`, or `result/`.
 5. **Preserve comments and TODOs:** Do not delete commented-out config blocks (e.g., `ollama` CUDA block, `nixGL`, `resilio`, `nix-index`) or `# todo` notes without confirming—they track active workarounds and planned migrations.

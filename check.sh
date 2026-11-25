@@ -8,7 +8,7 @@ mapfile -d '' nix_files < <(
     -not -path './.git/*' \
     -not -path './.jj/*' \
     -not -path './.opencode/*' \
-    -not -path './hardware-configuration.nix' \
+    -not -path '*/hardware-configuration.nix' \
     -print0
 )
 
@@ -26,7 +26,7 @@ nixfmt --check "${nix_files[@]}"
 echo "==> Linting (statix & deadnix)"
 run_lints() {
   statix check --ignore hardware-configuration.nix --ignore .opencode .
-  deadnix --fail --exclude ./hardware-configuration.nix "${nix_files[@]}"
+  deadnix --fail --exclude ./modules/hosts/aether/hardware-configuration.nix "${nix_files[@]}"
 }
 
 if command -v statix > /dev/null && command -v deadnix > /dev/null; then
@@ -34,7 +34,7 @@ if command -v statix > /dev/null && command -v deadnix > /dev/null; then
 else
   nix-shell -p statix deadnix --run '
     statix check --ignore hardware-configuration.nix --ignore .opencode . &&
-    deadnix --fail --exclude ./hardware-configuration.nix $(find . -name "*.nix" -not -path "./.git/*" -not -path "./.jj/*" -not -path "./.opencode/*" -not -path "./hardware-configuration.nix")
+    deadnix --fail --exclude ./modules/hosts/aether/hardware-configuration.nix $(find . -name "*.nix" -not -path "./.git/*" -not -path "./.jj/*" -not -path "./.opencode/*" -not -path "*/hardware-configuration.nix")
   '
 fi
 

@@ -8,7 +8,7 @@ mapfile -d '' nix_files < <(
     -not -path './.git/*' \
     -not -path './.jj/*' \
     -not -path './.opencode/*' \
-    -not -path './hardware-configuration.nix' \
+    -not -path '*/hardware-configuration.nix' \
     -print0
 )
 
