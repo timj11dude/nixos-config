@@ -25,13 +25,6 @@ in
     models = lib.mkOption {
       type = lib.types.attrs;
       default = {
-        "gemma4:latest" = {
-          name = "Gemma 4";
-          limit = {
-            context = contextLength;
-            output = 4096;
-          };
-        };
         "llama3.2:latest" = {
           name = "Llama 3.2 (3.2B)";
           limit = {
@@ -41,13 +34,6 @@ in
         };
         "qwen2.5-coder:7b" = {
           name = "Qwen 2.5 Coder (7B)";
-          limit = {
-            context = contextLength;
-            output = 4096;
-          };
-        };
-        "devstral:latest" = {
-          name = "Devstral (23.6B, coding)";
           limit = {
             context = contextLength;
             output = 4096;

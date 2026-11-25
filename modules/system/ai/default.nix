@@ -39,10 +39,8 @@ in
       models = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [
-          "gemma4:latest"
           "llama3.2:latest"
           "qwen2.5-coder:7b"
-          "devstral:latest"
           "JetBrains/Mellum-4b-base:latest"
         ];
         description = ''
