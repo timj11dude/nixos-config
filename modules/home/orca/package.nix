@@ -244,6 +244,11 @@ stdenvNoCC.mkDerivation {
     makeWrapper "$out/lib/Orca/orca-ide" "$out/bin/orca-ide" "''${launcherArgs[@]}"
     wrapProgram "$out/lib/Orca/resources/bin/orca-ide" "''${launcherArgs[@]}"
     ln -s "$out/lib/Orca/resources/bin/orca-ide" "$out/bin/orca"
+
+    # Point the desktop entry at the wrapped GUI binary in $out/bin so user
+    # PATH shims (e.g. ~/.local/bin/orca-ide) cannot shadow it with the CLI.
+    substituteInPlace "$out/share/applications/orca-ide.desktop" \
+      --replace-fail "Exec=orca-ide %U" "Exec=$out/bin/orca-ide %U"
   '';
 
   doInstallCheck = true;
