@@ -39,13 +39,6 @@ in
             output = 4096;
           };
         };
-        "devstral:latest" = {
-          name = "Devstral (23.6B, coding)";
-          limit = {
-            context = contextLength;
-            output = 4096;
-          };
-        };
         "JetBrains/Mellum-4b-base:latest" = {
           name = "Mellum 4B (base)";
           tool_call = false;
