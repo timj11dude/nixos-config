@@ -41,11 +41,12 @@ in
       default = with pins.unstablePkgs; [
         claude-code
         antigravity-cli
+        opencode
       ];
-      defaultText = lib.literalExpression "with (import ../../../pins.nix).unstablePkgs; [ claude-code antigravity-cli ]";
+      defaultText = lib.literalExpression "with (import ../../../pins.nix).unstablePkgs; [ claude-code antigravity-cli opencode ]";
       description = ''
         Agent CLIs the headless Orca server can drive, such as Claude Code
-        (`claude`) and Antigravity CLI (`agy` >= 1.5.2).
+        (`claude`), Antigravity CLI (`agy` >= 1.5.2), and OpenCode (`opencode`).
 
         Installed system-wide for interactive sign-in and appended to the
         Orca wrapper's PATH so `orca serve` can spawn them under systemd.

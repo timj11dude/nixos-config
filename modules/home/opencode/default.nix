@@ -107,7 +107,7 @@ in
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "Enable OpenCode, configured against the local Ollama server.";
+      description = "Enable OpenCode, defaulting to OpenCode Go models with local Ollama models also configured.";
     };
 
     package = lib.mkOption {
@@ -119,13 +119,13 @@ in
 
     model = lib.mkOption {
       type = lib.types.str;
-      default = "ollama/gemma4:latest";
+      default = "opencode-go/kimi-k3.1-pro";
       description = "Primary model, in OpenCode's provider/model form.";
     };
 
     smallModel = lib.mkOption {
       type = lib.types.str;
-      default = "ollama/llama3.2:latest";
+      default = "opencode-go/qwen3.8-flash";
       description = "Model used for lightweight tasks such as title generation.";
     };
 

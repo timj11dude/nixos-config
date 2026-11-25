@@ -28,12 +28,14 @@ in
       default = with pins.unstablePkgs; [
         claude-code
         antigravity-cli
+        opencode
       ];
-      defaultText = lib.literalExpression "with (import ../../../pins.nix).unstablePkgs; [ claude-code antigravity-cli ]";
+      defaultText = lib.literalExpression "with (import ../../../pins.nix).unstablePkgs; [ claude-code antigravity-cli opencode ]";
       description = ''
         Agent CLIs Orca can drive, such as Claude Code (`claude`, via
-        stream-json) and Antigravity CLI (`agy` >= 1.5.2, via ACP). These power
-        both terminal sessions and Orca's native chat/orchestration UI.
+        stream-json), Antigravity CLI (`agy` >= 1.5.2, via ACP), and OpenCode
+        (`opencode`). These power both terminal sessions and Orca's native
+        chat/orchestration UI.
 
         Installed into the user profile for interactive use (sign-in) and
         appended to the Orca wrapper's PATH so the desktop app and CLI can
