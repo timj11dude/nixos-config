@@ -1,11 +1,18 @@
 { config, pkgs, ... }:
 let
   unstablePkgs = import <nixos-unstable> { inherit pkgs; };
+  secretspecFile = ../../secretspec.toml;
+  withGpg = import ./gnupg/with-gpg.nix {
+    inherit pkgs unstablePkgs secretspecFile;
+  };
 in {
 
   home.packages = with pkgs; [
     eza
     devenv
+    unstablePkgs.bws
+    unstablePkgs.secretspec
+    withGpg
   ];
 
   home.file = {
@@ -189,7 +196,6 @@ in {
       personal-digest-preferences = "SHA512 SHA384 SHA256 SHA224";
       default-preference-list = "SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 BZIP2 ZLIB ZIP Uncompressed";
       cert-digest-algo = "SHA512";
-      pinentry-mode = "loopback";
       log-file = "${config.xdg.stateHome}/gnupg/log";
       log-time = true;
     };
@@ -205,9 +211,6 @@ in {
     extraConfig = ''
       pinentry-program ${pkgs.pinentry-qt}/bin/pinentry-qt
     '';
-    sshKeys = [
-      "BF3EDDD040FDF9435FD5F9B24577FB832C6B0E49" # source via `gpg --list-secret-keys --with-keygrip timj91@gmail.com`
-    ];
   };
 
   programs.ssh = {
@@ -217,7 +220,7 @@ in {
       "*" = {
         compression = true;
         controlMaster = "auto";
-        controlPath = "/tmp/%u:%r@%h:%p";
+        controlPath = "~/.ssh/cm-%C";
         controlPersist = "120";
         forwardAgent = false;
         serverAliveCountMax = 6;

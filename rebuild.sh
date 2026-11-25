@@ -5,7 +5,7 @@ DIRECTORIES=$(fd --type d)
 FILES=$(fd .nix)
 
 echo "moving files to ${NIXOS}"
-sudo cp $FILES $NIXOS
+sudo cp $FILES secretspec.toml $NIXOS
 sudo cp -r $DIRECTORIES $NIXOS
 
 sudo nixos-rebuild $@
