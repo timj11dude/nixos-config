@@ -7,6 +7,9 @@
 /home/*/.local/share/Steam/userdata/**/gamerecordings/
 /home/*/.local/share/Steam/ubuntu12_32/
 /home/*/.local/share/Steam/ubuntu12_64/
+/home/*/.local/share/gnupg
+/home/*/.config/sops
+/home/*/.config/restic
 node_modules/
 .git/
 .gradle/

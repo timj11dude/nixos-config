@@ -56,8 +56,9 @@ in
     config.allowUnfreePredicate =
       pkg:
       builtins.elem (pkg.pname or "") [
-        "claude-code"
         "antigravity-cli"
+        "bws"
+        "claude-code"
       ];
   };
 }

@@ -7,6 +7,11 @@
 }:
 let
   cfg = config.my.terminal;
+  withGpg = import ./gnupg/with-gpg.nix {
+    inherit pkgs;
+    inherit (pins) unstablePkgs;
+    secretspecFile = ../../../secretspec.toml;
+  };
 in
 {
   options.my.terminal = {
@@ -19,9 +24,11 @@ in
       devenv
       eza
       nixfmt
+      pins.unstablePkgs.bws
       secretspec
       statix
       unzip
+      withGpg
     ];
 
     home.file."${config.xdg.dataHome}/gnupg/pinentry.sh" = {
@@ -213,7 +220,6 @@ in
           personal-digest-preferences = "SHA512 SHA384 SHA256 SHA224";
           default-preference-list = "SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 BZIP2 ZLIB ZIP Uncompressed";
           cert-digest-algo = "SHA512";
-          pinentry-mode = "loopback";
           log-file = "${config.xdg.stateHome}/gnupg/log";
           log-time = true;
         };
@@ -226,7 +232,7 @@ in
           "*" = {
             compression = true;
             controlMaster = "auto";
-            controlPath = "/tmp/%u:%r@%h:%p";
+            controlPath = "~/.ssh/cm-%C";
             controlPersist = "120";
             forwardAgent = false;
             serverAliveCountMax = 6;
@@ -249,9 +255,6 @@ in
       enableSshSupport = true;
       enableZshIntegration = true;
       pinentry.package = pkgs.pinentry-qt;
-      sshKeys = [
-        "BF3EDDD040FDF9435FD5F9B24577FB832C6B0E49" # source via `gpg --list-secret-keys --with-keygrip timj91@gmail.com`
-      ];
     };
   };
 }
