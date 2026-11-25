@@ -7,6 +7,22 @@ Personal NixOS and Home Manager configuration for host `aether`.
 - **Deployment:** Configuration files are synced into `/etc/nixos/` and applied with `./rebuild.sh` (compare live state with `./diff.sh`).
 - **Agent & Contributor Docs:** See [`AGENTS.md`](./AGENTS.md) for workflows, conventions, and guardrails, and [`GLOSSARY.md`](./GLOSSARY.md) for hostnames, storage mounts, scripts, and project terminology.
 
+## Installing from the NixOS Live ISO
+
+Boot the NixOS installer ISO (graphical or minimal), connect to the network, then run:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/timj11dude/nixos-config/main/bootstrap.sh | bash
+```
+
+`bootstrap.sh` clones this repository to `/tmp/nixos-config` (using `nix-shell -p git` if `git` is missing) and hands over to the interactive `./install.sh`, which:
+
+1. Lets you use an existing host, copy one as a template (dropping `disko.nix`, `hardware-configuration.nix`, and optionally NVIDIA / TrueNAS / scanner / ckb-next / Restic config), or create a minimal host from `modules/hosts/_template`.
+2. Partitions the target disk with [disko](https://github.com/nix-community/disko) from `modules/hosts/_template/disko.nix` (you edit the `__DISK_ID__` placeholder; a typed `DESTROY` confirmation is required), or uses an already-mounted `/mnt`.
+3. Collects `hardware-configuration.nix`, checks for the sops age key (offering `./bootstrap-secrets.sh` or a `keys.txt` import), copies the repo to `/home/timj/Projects/github.com:timj11dude/nixos-config`, links `/etc/nixos/configuration.nix` to the host's `default.nix`, and runs `nixos-install`.
+
+Pass flags through with `bash -s --`, for example `... | bash -s -- --host myhost --from _template`. Run `./install.sh --help` for all options (`--host`, `--from`, `--hardware-config`, `--root`, `--dry-run`, `--yes`). To preview safely anywhere, use `./install.sh --dry-run --root /tmp/fake-mnt`: it scaffolds in a throwaway copy of the repo and only parses/evaluates; it never partitions, installs, or writes to the target root. After the first boot, run `./bootstrap-secrets.sh` and commit `modules/hosts/<name>/`.
+
 ## Standalone Install (non-NixOS systems)
 
 This configuration can be used with [home-manager](https://github.com/nix-community/home-manager) on non-NixOS systems like macOS, without needing root permissions to install Nix.

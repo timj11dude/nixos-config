@@ -23,6 +23,7 @@ For hostnames, mounts, hardware identifiers, scripts, and project terminology, s
 | `restic/` | `excludesFile` and `includesFile` read directly by `services.restic` in `configuration.nix`. | `includesFile` targets WoW `AddOns` and `WTF` paths. |
 | `secrets/` & `.sops.yaml` | SOPS-encrypted `secrets/secrets.yaml` and `age` creation rules. | **Sensitive.** Never decrypt, log, or commit plaintext secrets. |
 | `rebuild.sh`, `diff.sh`, `nixfmt.sh` | Repo-to-`/etc/nixos/` deployment, diffing, and formatting scripts. | See §3 and §6 for script scope and quirks. |
+| `bootstrap.sh`, `install.sh`, `modules/hosts/_template/` | Live ISO installer: `bootstrap.sh` clones the repo to `/tmp/nixos-config` and `exec`s `install.sh`, which scaffolds `modules/hosts/<name>/` (from `_template/{configuration,default,disko}.nix` or by copying a host), partitions via disko, and runs `nixos-install`. | **Live ISO only; never run on the live host.** Test with `./install.sh --dry-run --root /tmp/fake-mnt`. |
 | `modules/hosts/aether/hardware-configuration.nix` | Machine-generated hardware scan (gitignored). | Lives in `modules/hosts/aether/hardware-configuration.nix`; absent from clean git checkouts. |
 
 ### Where New Configuration Belongs
@@ -68,6 +69,10 @@ nixfmt <file.nix>
 ### System Mutation & Secrets (Require Explicit Owner Approval)
 
 ```bash
+# Live ISO installer (partitions disks with disko and runs nixos-install). Only ever
+# run on the NixOS live installer; `--dry-run` is the only mode safe elsewhere.
+./install.sh [--dry-run] [--host <name>] [--from <host|_template>] [--root <path>]
+
 # Copy repo files to /etc/nixos/ and run nixos-rebuild (mutates /etc/nixos/ and live system)
 ./rebuild.sh <dry-build|test|boot|switch>
 

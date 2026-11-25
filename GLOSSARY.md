@@ -35,11 +35,14 @@ Keep entries concise, factual, alphabetically ordered within each section, and f
 
 | Term | Meaning / Role in This Repo | Where Referenced |
 | --- | --- | --- |
+| `bootstrap.sh` | Live ISO one-command entrypoint (`curl -fsSL .../bootstrap.sh \| bash`): ensures `git` (via `nix-shell -p git`), clones/updates the repo in `/tmp/nixos-config`, then `exec`s `./install.sh` with `/dev/tty` as stdin. | `bootstrap.sh`, `README.md` |
 | `diff.sh` | Stages `$(fd .nix)` and `$(fd --type d)` into a temp directory and runs `diff -qr /etc/nixos/ $TEMP`. Read-only; shares the `fd` flattening quirk with `rebuild.sh`. | `diff.sh` |
 | `modules/gaming` | Home Manager module configuring Lutris (wired to `osConfig.programs.steam.package`, `proton-ge-bin`, `wineWow64Packages.full`, `winetricks`), `prismlauncher`, and `wowup-cf`. | `modules/gaming/gaming.nix`, `home.nix` |
 | `modules/terminal` | Home Manager module configuring Ghostty, Zsh (`oh-my-zsh`), Starship, `direnv`, `devenv`, `eza`, `fd`, `fzf`, `btop` (CUDA), Vim, Git (`delta`, GPG signing), Jujutsu (`jj`), GPG + GPG-agent, SSH, and IDEA pinentry script generation. | `modules/terminal/terminal.nix`, `modules/terminal/README.md`, `home.nix` |
 | `modules/terminal/gnupg/pinentry-ide.sh` | **Deprecated unreferenced legacy file** (pending removal in a follow-up cleanup PR) with hardcoded `/nix/store/...` paths; superseded by `home.file."${config.xdg.dataHome}/gnupg/pinentry.sh"` in `modules/terminal/terminal.nix`. | `modules/terminal/gnupg/pinentry-ide.sh` |
 | `modules/terminal/zsh/.{zlogin,zshenv,zshrc}` | **Deprecated unreferenced legacy dotfiles** (pending removal in a follow-up cleanup PR) from a pre-Nix setup (references `~/.oh-my-zsh`, `sdkman`, `~/.zsh_aliases`); active Zsh config is declared in `modules/terminal/terminal.nix`. | `modules/terminal/zsh/` |
+| `install.sh` | Interactive NixOS Live ISO installer: scaffolds a host (existing / copy / `_template`), optionally partitions with the pinned disko, collects `hardware-configuration.nix`, handles the sops age key, copies the repo to `/home/timj/Projects/github.com:timj11dude/nixos-config`, symlinks `/etc/nixos/configuration.nix` to the host `default.nix`, and runs `nixos-install`. Flags: `--host`, `--from`, `--hardware-config`, `--root`, `--dry-run`, `--yes`. | `install.sh` |
+| `modules/hosts/_template/disko.nix` | Single-drive GPT disko template (512M ESP + ext4 root, optional swap) with a `__DISK_ID__` placeholder; copied to a new host by `install.sh`. | `modules/hosts/_template/disko.nix`, `install.sh` |
 | `nixfmt.sh` | `nix-shell` script (`nixfmt-rfc-style`) running `nixfmt *.nix`. Only covers top-level `.nix` files, not `modules/**/*.nix`. | `nixfmt.sh` |
 | `rebuild.sh` | Copies `$(fd .nix)` and `$(fd --type d)` to `/etc/nixos/` via `sudo cp` and runs `sudo nixos-rebuild $@`. Mutates `/etc/nixos/` and the live host. | `rebuild.sh` |
 
