@@ -81,10 +81,11 @@ so its compaction logic works against the real limit.
 ## OpenCode
 
 `programs.opencode.settings` is written to
-`~/.config/opencode/opencode.json`. The Ollama provider is registered as an
-OpenAI-compatible endpoint, with the primary model set by
-`ai.opencode.model` (default `ollama/gemma4:latest`) and
-`ai.opencode.smallModel` (default `ollama/llama3.2:latest`).
+`~/.config/opencode/opencode.json`. OpenCode defaults to OpenCode Go
+subscription models (`home.opencode.model`, default `opencode-go/kimi-k3.1-pro`,
+and `home.opencode.smallModel`, default `opencode-go/qwen3.8-flash`), while the
+local Ollama provider remains registered as an OpenAI-compatible endpoint so
+local models can be selected on demand.
 
 `autoupdate` is disabled: OpenCode is installed from Nix, so upgrading it in
 place would only try to write to the Nix store.
