@@ -41,12 +41,56 @@ resolve_nixpkgs() {
   nix-instantiate --eval -E '(import ./pins.nix).nixpkgs' --raw
 }
 
+HOST="${NIXOS_HOST:-}"
+ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --host)
+      if [[ $# -lt 2 ]]; then
+        echo "Error: --host requires a hostname argument." >&2
+        exit 1
+      fi
+      HOST="$2"
+      shift 2
+      ;;
+    --host=*)
+      HOST="${1#--host=}"
+      shift
+      ;;
+    *)
+      ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [[ -z "$HOST" ]]; then
+  HOST="$(hostname -s)"
+fi
+
+HOST_DIR="$PWD/modules/hosts/$HOST"
+HOST_ENTRYPOINT="$HOST_DIR/default.nix"
+HOST_HARDWARE="$HOST_DIR/hardware-configuration.nix"
+
+if [[ ! -f "$HOST_ENTRYPOINT" ]]; then
+  echo "Error: host entrypoint not found: $HOST_ENTRYPOINT" >&2
+  echo "Create modules/hosts/$HOST/ from modules/hosts/_template/ or pass --host <name>." >&2
+  exit 1
+fi
+
+if [[ ! -f "$HOST_HARDWARE" ]]; then
+  echo "Error: machine-generated hardware config not found: $HOST_HARDWARE" >&2
+  echo "Generate it on this machine with: nixos-generate-config --show-hardware-config > $HOST_HARDWARE" >&2
+  exit 1
+fi
+
 NIXOS_LABEL="$(compute_label)"
 export NIXOS_LABEL
 NIXPKGS_PATH="$(resolve_nixpkgs)"
 
+echo "Host: $HOST"
 echo "Generation label: $NIXOS_LABEL"
-sudo NIXOS_LABEL="$NIXOS_LABEL" nixos-rebuild "$@" \
+sudo NIXOS_LABEL="$NIXOS_LABEL" nixos-rebuild "${ARGS[@]}" \
   -I nixpkgs="$NIXPKGS_PATH" \
-  -I nixos-config="$PWD/configuration.nix"
-
+  -I nixos-config="$HOST_ENTRYPOINT"

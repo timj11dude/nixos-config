@@ -1,0 +1,20 @@
+// Host-specific Niri overrides for `aether`.
+
+environment {
+    NVD_BACKEND "direct"
+    LIBVA_DRIVER_NAME "nvidia"
+    __GLX_VENDOR_LIBRARY_NAME "nvidia"
+}
+
+// `niri msg outputs`
+// https://niri-wm.github.io/niri/Configuration:-Outputs
+output "Microstep MPG491CX OLED Unknown" {
+    mode "5120x1440@240.000"
+    scale 1
+    transform "normal"
+    // disabled as `niri msg outputs` reports it is unsupported (need to fix)
+    variable-refresh-rate on-demand=true
+    focus-at-startup
+}
+
+spawn-sh-at-startup "swaybg -i ~/Photos/aether_logo/aether_logo.png -m center"

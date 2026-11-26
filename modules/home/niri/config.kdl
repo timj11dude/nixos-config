@@ -3,12 +3,6 @@
 // Check the wiki for a full description of the configuration:
 // https://niri-wm.github.io/niri/Configuration:-Introduction
 
-environment {
-	NVD_BACKEND "direct"
-	LIBVA_DRIVER_NAME "nvidia"
-	__GLX_VENDOR_LIBRARY_NAME "nvidia"
-}
-
 // https://niri-wm.github.io/niri/Configuration:-Input
 input {
     keyboard {
@@ -23,31 +17,16 @@ input {
         numlock
     }
 
-    touchpad {
-	off
-    }
-
     mouse {
     }
+
+    // @EXTRA_INPUT_CONFIG@
 
     // warp-mouse-to-focus
 
     disable-power-key-handling
     workspace-auto-back-and-forth
 }
-
-// `niri msg outputs`
-// https://niri-wm.github.io/niri/Configuration:-Outputs
-output "Microstep MPG491CX OLED Unknown" {
-    mode "5120x1440@240.000"
-    scale 1
-    transform "normal"
-    // disabled as `niri msg outputs` reports it is unsupported (need to fix)
-    variable-refresh-rate on-demand=true
-    focus-at-startup
-}
-
-spawn-sh-at-startup "swaybg -i ~/Photos/aether_logo/aether_logo.png -m center"
 
 // https://niri-wm.github.io/niri/Configuration:-Layout
 layout {

@@ -5,16 +5,19 @@ For hostnames, mounts, hardware identifiers, scripts, and project terminology, s
 
 ## 1. Project Overview
 
-- **Purpose:** Personal NixOS + Home Manager workstation configuration for host `aether` (primary user `timj`, locale `en_GB.UTF-8`, timezone `Europe/London`).
-- **Evaluation Model:** Non-flake NixOS channels (`<nixpkgs>`, `<home-manager/nixos>`, `<nixos-unstable>`). There is no `flake.nix` or `flake.lock`.
-- **Home Manager Integration:** Managed as a NixOS module (`<home-manager/nixos>` in `configuration.nix` via `home-manager.users.timj = ./home.nix`), not standalone `home-manager switch`. Note `home-manager.useGlobalPkgs` is not enabled, so system and Home Manager evaluate separate `nixpkgs.config` settings.
-- **Deployment Model:** `nixos-rebuild` reads `/etc/nixos/configuration.nix` (via `NIX_PATH`). `./rebuild.sh` copies repository files into `/etc/nixos/` and invokes `sudo nixos-rebuild`.
+- **Purpose:** Multi-host personal NixOS + Home Manager configuration (primary user `timj`, locale `en_GB.UTF-8`, timezone `Europe/London`), with per-host entrypoints under `modules/hosts/<hostname>/` (currently `aether`, plus `_template` for new machines).
+- **Evaluation Model:** Non-flake NixOS channels (`<nixpkgs>`, `<nixos-unstable>`) with pinned module sources in `pins.nix`. There is no `flake.nix` or `flake.lock`.
+- **Home Manager Integration:** Managed as a NixOS module (`"${pins.home-manager}/nixos"` in `configuration.nix` via `home-manager.users.timj = { imports = [ ./home.nix ]; };`), allowing host modules to cleanly merge per-host HM overrides. `home-manager.useGlobalPkgs = true` is enabled.
+- **Deployment Model:** `./rebuild.sh [--host <name>] <action>` selects `modules/hosts/<host>/default.nix` (via `--host`, `$NIXOS_HOST`, or `$(hostname -s)`) and passes `-I nixos-config="$PWD/modules/hosts/$HOST/default.nix"` to `sudo nixos-rebuild`. For `system.autoUpgrade`, symlink `/etc/nixos/configuration.nix` to the checkout's `modules/hosts/<hostname>/default.nix`.
 
 ## 2. Repository Structure & Ownership Boundaries
 
 | Path | Responsibility | Status / Notes |
 | --- | --- | --- |
-| `configuration.nix` | System-level NixOS config: boot (`systemd-boot`), networking, CIFS mounts, X11/i3, NVIDIA, PipeWire, printing/Avahi, SSH, firewall, Restic backups, Steam, `sops-nix`, `autoUpgrade`. | Imports `./hardware-configuration.nix` (host-only), `./disko.nix`, `<home-manager/nixos>`, and fetched `disko` / `sops-nix` tarballs. |
+| `configuration.nix` | Shared base system-level NixOS config: boot (`systemd-boot`), networking, PipeWire, printing/Avahi, SSH, `sops-nix`, `autoUpgrade`, Home Manager base. | Host-overridable defaults use `lib.mkDefault`. Imported by each `modules/hosts/<hostname>/configuration.nix`. |
+| `modules/hosts/<hostname>/` | Per-host NixOS entrypoint (`default.nix` importing `./configuration.nix` + gitignored `./hardware-configuration.nix`), host config (`configuration.nix`), and host-specific assets (e.g. `aether/niri.kdl`). | `_template/` is a starter template excluded from host discovery and `./check.sh`. |
+| `modules/home/niri/` | Niri HM module (`default.nix`) plus shared `config.kdl`, validated with `niri validate`. Hosts customise it via `my.niri.extraConfig` (KDL appended to the end) and `my.niri.extraInputConfig` (KDL spliced into the shared `input` block at the `// @EXTRA_INPUT_CONFIG@` placeholder). | Put per-host `input` settings in `extraInputConfig`, **not** `extraConfig`: niri rejects a repeated top-level `input` node. Keep the placeholder comment in `config.kdl`. |
+| `modules/system/hardware-stub.nix` | Minimal `hostPlatform` + `/` `fileSystems` stub used ONLY by `./check.sh` when a host's gitignored `hardware-configuration.nix` is absent locally. | Never imported by real host `default.nix` entrypoints. |
 | `home.nix` | User-level Home Manager config for `timj`: GUI/CLI packages, Firefox, Thunderbird, Rofi, `spotify-player`, `trayscale`, `ollama`, Gradle properties, XDG settings, `i3` config symlinks. | Imports `modules/terminal/terminal.nix` and `modules/gaming/gaming.nix`. |
 | `modules/hosts/aether/disko.nix` | Declarative GPT partitioning and LVM layout (6 physical disks -> `pool` VG -> `root`, `nix`, `swap` LVs; 500M ESP on `nvme_samsung_1`). | **High-risk.** Do not modify unless explicitly requested. |
 | `modules/terminal/` | Terminal & dev environment HM module (`terminal.nix`): Ghostty, Zsh (`oh-my-zsh`), Starship, `direnv`, `devenv`, `eza`, `fd`, `fzf`, `btop` (CUDA), Vim, Git (`delta`, GPG signing), Jujutsu (`jj` from unstable), GPG + GPG-agent (SSH support), SSH, IDE pinentry generator. | `git/excludesFile` is active. **`zsh/.zlogin`, `zsh/.zshenv`, `zsh/.zshrc`, and `gnupg/pinentry-ide.sh` are unreferenced legacy files** (see §6). |
@@ -121,5 +124,6 @@ nix-shell -p sops --run "sops secrets/secrets.yaml"
 ## 8. Related Documentation
 
 - [`GLOSSARY.md`](./GLOSSARY.md) — Hostnames, storage/mounts, scripts, modules, hardware, and NixOS terminology as used in this repo.
-- [`README.md`](./README.md) — Personal NixOS/Home Manager overview, migration checklist, and software idea inbox.
+- [`README.md`](./README.md) — Personal NixOS/Home Manager overview, host onboarding guide, migration checklist, and software idea inbox.
+- [`modules/hosts/README.md`](./modules/hosts/README.md) — Host directory layout and new-host onboarding checklist.
 - [`modules/terminal/README.md`](./modules/terminal/README.md) — Brief overview of the terminal module.

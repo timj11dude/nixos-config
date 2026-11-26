@@ -1,10 +1,63 @@
 # nixos-config
-Personal NixOS and Home Manager configuration for host `aether`.
+Multi-host personal NixOS and Home Manager configuration (starting with host `aether`).
+
+## Onboarding
+
+> [!IMPORTANT]
+> For a quick reminder when working directly inside the hosts directory, see [`modules/hosts/README.md`](./modules/hosts/README.md).
+
+Follow these steps to add a new NixOS machine to this repository (or to bootstrap an existing host from a fresh clone):
+
+1. **Create the host directory from the template:**
+   ```sh
+   cp -r modules/hosts/_template modules/hosts/<hostname>
+   ```
+   Edit `modules/hosts/<hostname>/configuration.nix` and replace `__HOSTNAME__` with `<hostname>` (matching the directory name so `./rebuild.sh` auto-detects it via `$(hostname -s)`). Directories starting with `_` (such as `_template`) are ignored by `./check.sh`; any other directory under `modules/hosts/` is automatically evaluated.
+
+2. **Generate `hardware-configuration.nix` on the target machine:**
+   `modules/hosts/<hostname>/default.nix` imports `./hardware-configuration.nix`, which is gitignored and machine-local:
+   ```sh
+   nixos-generate-config --show-hardware-config > modules/hosts/<hostname>/hardware-configuration.nix
+   ```
+   - If the host uses a host-local `disko.nix`, pass `--no-filesystems` to `nixos-generate-config` so `fileSystems` definitions do not conflict.
+   - If setting up an existing host (such as `aether`) from a fresh clone, run this same command on that machine to populate its gitignored `hardware-configuration.nix` before rebuilding.
+
+3. **Configure host options, hardware, and overrides** in `modules/hosts/<hostname>/configuration.nix`:
+   - **Feature toggles:** Enable host-level options as needed (`ai.enable`, `gaming.enable`, `programs.noctalia.enable`, `backups.restic.enable`, `services.orca-ide.enable` / `services.orca-server.enable`, `services.herdr.enable`). Coupled Home Manager options in `home.nix` (`my.gaming.enable`, `my.niri.enable`, `programs.noctalia.enable`, and `my.terminal.cudaSupport`) follow `osConfig` automatically.
+   - **Shared defaults (`lib.mkDefault`):** Base system (`configuration.nix`) and Home Manager (`home.nix`) options use `lib.mkDefault`, so hosts can override defaults cleanly (for example `services.greetd.enable = false;` or `home-manager.users.timj.my.music.enable = false;`).
+   - **GPU & unfree packages:** Set `services.xserver.videoDrivers` (e.g. `[ "nvidia" ]`) and add any host-specific unfree packages to `nixpkgs.config.allowUnfreePackages`.
+   - **Disks:** Do **not** import the root `../../../disko.nix` unless the machine matches `aether`'s exact disk layout; keep any host-specific `disko.nix` inside `modules/hosts/<hostname>/`.
+   - **Niri overrides:** Use `home-manager.users.timj.my.niri.extraConfig` (for example `builtins.readFile ./niri.kdl`) for `environment`, `output`, and `spawn-sh-at-startup` blocks, and `home-manager.users.timj.my.niri.extraInputConfig` for nodes inside the shared `input { ... }` block (such as `touchpad { off }`, because `niri validate` rejects duplicate top-level `input` blocks).
+   - **Secrets (`sops-nix`):** Only hosts that declare `sops.secrets.*` require the `age` private key at `/home/timj/.config/sops/age/keys.txt` (`chmod 600`) at activation time.
+
+4. **Verify, build, and enable `autoUpgrade`:**
+   ```sh
+   # Parse, multi-host eval, nixfmt, statix, and deadnix checks
+   ./check.sh
+
+   # Build and activate on the target machine
+   ./rebuild.sh --host <hostname> dry-build
+   ./rebuild.sh --host <hostname> switch
+
+   # Point /etc/nixos/configuration.nix at the host entrypoint for system.autoUpgrade
+   sudo ln -sfn "$PWD/modules/hosts/$(hostname -s)/default.nix" /etc/nixos/configuration.nix
+   ```
+   - `./check.sh` evaluates hosts without a local `hardware-configuration.nix` using `modules/system/hardware-stub.nix`, whereas `./rebuild.sh` requires the real machine-generated `hardware-configuration.nix`.
+   - If you modified Niri config (`extraConfig` / `extraInputConfig`), you can also run the build-time `niri validate` check directly before rebuilding:
+     ```sh
+     nix-build '<nixpkgs/nixos>' --no-out-link \
+       --arg configuration ./modules/hosts/<hostname>/default.nix \
+       -A 'config.home-manager.users.timj.xdg.configFile."niri/config.kdl".source'
+     ```
+
+5. **Commit the tracked host files:**
+   Commit `modules/hosts/<hostname>/default.nix`, `modules/hosts/<hostname>/configuration.nix`, and any host assets (such as `niri.kdl`). Leave `hardware-configuration.nix` untracked/gitignored.
 
 ## Architecture & Deployment
 
-- **System & User Config:** `configuration.nix` manages system-level NixOS configuration and imports Home Manager as a NixOS module (`<home-manager/nixos>` via `home-manager.users.timj = ./home.nix`), providing a single source of truth for system services, user packages, dotfiles, and user services.
-- **Deployment:** Configuration files are synced into `/etc/nixos/` and applied with `./rebuild.sh` (compare live state with `./diff.sh`).
+- **Shared Base & Per-Host Entrypoints:** Top-level `configuration.nix` defines shared system defaults (with `lib.mkDefault` for host-overridable options) and imports Home Manager (`home-manager.users.timj = { imports = [ ./home.nix ]; };`). Each machine lives under `modules/hosts/<hostname>/` with `default.nix` (importing `./configuration.nix` and gitignored `./hardware-configuration.nix`). See [Onboarding](#onboarding) and [`modules/hosts/README.md`](./modules/hosts/README.md) when adding a machine.
+- **Deployment:** Run `./rebuild.sh [--host <name>] <switch|boot|test|dry-build>`. The host defaults to `$NIXOS_HOST` or `$(hostname -s)` and evaluates `modules/hosts/<host>/default.nix` directly via `-I nixos-config=...`.
+- **Auto-Upgrade Symlink:** For `system.autoUpgrade` to evaluate the right host automatically, symlink `/etc/nixos/configuration.nix` to this checkout's `modules/hosts/<hostname>/default.nix` (e.g. `sudo ln -sfn "$PWD/modules/hosts/$(hostname -s)/default.nix" /etc/nixos/configuration.nix`).
 - **Agent & Contributor Docs:** See [`AGENTS.md`](./AGENTS.md) for workflows, conventions, and guardrails, and [`GLOSSARY.md`](./GLOSSARY.md) for hostnames, storage mounts, scripts, and project terminology.
 
 ## Installing from the NixOS Live ISO

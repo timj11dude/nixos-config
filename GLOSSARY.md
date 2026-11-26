@@ -7,7 +7,7 @@ Keep entries concise, factual, alphabetically ordered within each section, and f
 
 | Term | Meaning / Role in This Repo | Where Referenced |
 | --- | --- | --- |
-| `aether` | Primary NixOS workstation configured by this repository (`networking.hostName`, mapped to `127.0.0.1`). | `configuration.nix` |
+| `aether` | Primary NixOS workstation configured under `modules/hosts/aether/` (`networking.hostName`, mapped to `127.0.0.1`). | `modules/hosts/aether/configuration.nix` |
 | `cluster` / `kube_control_plane` | Local host aliases mapped to `192.168.0.178` in `/etc/hosts` for a local Kubernetes control plane. | `configuration.nix` |
 | `jacoserver` / `truenas` | Local TrueNAS server at `192.168.1.177` providing CIFS shares (`private`, `Photos`, `Media`) mounted under `/mnt/jacoserver/*`, plus the Restic backup repository target. | `configuration.nix` |
 | `Tailscale` / `trayscale` | Mesh VPN daemon enabled at system level (`services.tailscale`) paired with the `trayscale` user tray service (`services.trayscale`). | `configuration.nix`, `home.nix` |
@@ -36,7 +36,11 @@ Keep entries concise, factual, alphabetically ordered within each section, and f
 | Term | Meaning / Role in This Repo | Where Referenced |
 | --- | --- | --- |
 | `bootstrap.sh` | Live ISO one-command entrypoint (`curl -fsSL .../bootstrap.sh \| bash`): ensures `git` (via `nix-shell -p git`), clones/updates the repo in `/tmp/nixos-config`, then `exec`s `./install.sh` with `/dev/tty` as stdin. | `bootstrap.sh`, `README.md` |
+| `check.sh` | Pre-merge verification gate: parses all tracked `.nix` files, evaluates every non-underscore host under `modules/hosts/*/` (falling back to `modules/system/hardware-stub.nix` when `hardware-configuration.nix` is absent), checks `nixfmt`, and runs `statix` + `deadnix`. | `check.sh` |
 | `diff.sh` | Stages `$(fd .nix)` and `$(fd --type d)` into a temp directory and runs `diff -qr /etc/nixos/ $TEMP`. Read-only; shares the `fd` flattening quirk with `rebuild.sh`. | `diff.sh` |
+| `modules/hosts/<hostname>/` | Per-host NixOS config directory containing `default.nix` (imports `./configuration.nix` + gitignored `./hardware-configuration.nix`), `configuration.nix` (imports `../../../configuration.nix`), and host-specific assets (e.g. `aether/niri.kdl`). `_template/` is a starter template ignored by `./check.sh`; see `modules/hosts/README.md`. | `modules/hosts/`, `modules/hosts/README.md` |
+| `my.niri.*` | Options of the Niri Home Manager module (`modules/home/niri/default.nix`), which validates and installs the shared `config.kdl` as `~/.config/niri/config.kdl`. `enable` turns the module on; `extraConfig` (lines, default `""`) is host-specific KDL **appended** to the shared config; `extraInputConfig` (lines, default `""`) is host-specific KDL nodes **spliced into the shared top-level `input` block** at the `// @EXTRA_INPUT_CONFIG@` placeholder in `config.kdl` (niri rejects a repeated top-level `input` node, so input settings such as `touchpad { off }` must use this option, not `extraConfig`). Set per host via `home-manager.users.timj.my.niri` (see `aether`). | `modules/home/niri/default.nix`, `modules/home/niri/config.kdl`, `modules/hosts/aether/configuration.nix` |
+| `modules/system/hardware-stub.nix` | Minimal `nixpkgs.hostPlatform` and `/` `fileSystems` stub used exclusively by `./check.sh` when a host's gitignored `hardware-configuration.nix` is absent locally. | `check.sh`, `modules/system/hardware-stub.nix` |
 | `modules/gaming` | Home Manager module configuring Lutris (wired to `osConfig.programs.steam.package`, `proton-ge-bin`, `wineWow64Packages.full`, `winetricks`), `prismlauncher`, and `wowup-cf`. | `modules/gaming/gaming.nix`, `home.nix` |
 | `modules/terminal` | Home Manager module configuring Ghostty, Zsh (`oh-my-zsh`), Starship, `direnv`, `devenv`, `eza`, `fd`, `fzf`, `btop` (CUDA), Vim, Git (`delta`, GPG signing), Jujutsu (`jj`), GPG + GPG-agent, SSH, and IDEA pinentry script generation. | `modules/terminal/terminal.nix`, `modules/terminal/README.md`, `home.nix` |
 | `modules/terminal/gnupg/pinentry-ide.sh` | **Deprecated unreferenced legacy file** (pending removal in a follow-up cleanup PR) with hardcoded `/nix/store/...` paths; superseded by `home.file."${config.xdg.dataHome}/gnupg/pinentry.sh"` in `modules/terminal/terminal.nix`. | `modules/terminal/gnupg/pinentry-ide.sh` |
@@ -44,7 +48,7 @@ Keep entries concise, factual, alphabetically ordered within each section, and f
 | `install.sh` | Interactive NixOS Live ISO installer: scaffolds a host (existing / copy / `_template`), optionally partitions with the pinned disko, collects `hardware-configuration.nix`, handles the sops age key, copies the repo to `/home/timj/Projects/github.com:timj11dude/nixos-config`, symlinks `/etc/nixos/configuration.nix` to the host `default.nix`, and runs `nixos-install`. Flags: `--host`, `--from`, `--hardware-config`, `--root`, `--dry-run`, `--yes`. | `install.sh` |
 | `modules/hosts/_template/disko.nix` | Single-drive GPT disko template (512M ESP + ext4 root, optional swap) with a `__DISK_ID__` placeholder; copied to a new host by `install.sh`. | `modules/hosts/_template/disko.nix`, `install.sh` |
 | `nixfmt.sh` | `nix-shell` script (`nixfmt-rfc-style`) running `nixfmt *.nix`. Only covers top-level `.nix` files, not `modules/**/*.nix`. | `nixfmt.sh` |
-| `rebuild.sh` | Copies `$(fd .nix)` and `$(fd --type d)` to `/etc/nixos/` via `sudo cp` and runs `sudo nixos-rebuild $@`. Mutates `/etc/nixos/` and the live host. | `rebuild.sh` |
+| `rebuild.sh` | Host-aware wrapper around `sudo nixos-rebuild`: resolves host via `--host <name>`, `$NIXOS_HOST`, or `$(hostname -s)`, verifies `modules/hosts/$HOST/{default,hardware-configuration}.nix`, and passes `-I nixos-config="$PWD/modules/hosts/$HOST/default.nix"`. | `rebuild.sh` |
 
 ## 5. NixOS & Toolchain Concepts (Project-Specific Usage)
 

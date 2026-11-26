@@ -1,6 +1,8 @@
 {
   config,
   pkgs,
+  lib,
+  osConfig ? { },
   ...
 }:
 {
@@ -22,7 +24,7 @@
   home = {
     username = "timj";
     homeDirectory = "/home/timj";
-    stateVersion = "24.11"; # Do not modify without checking upgrade notes.
+    stateVersion = lib.mkDefault "24.11"; # Do not modify without checking upgrade notes.
     preferXdgDirectories = true;
 
     packages = with pkgs; [
@@ -65,27 +67,27 @@
 
   # Opt-in Home Manager feature modules
   my = {
-    gaming.enable = true;
-    music.enable = true;
-    niri.enable = true;
-    terminal.enable = true;
-    zellij.enable = true;
+    gaming.enable = lib.mkDefault (osConfig.gaming.enable or false);
+    music.enable = lib.mkDefault true;
+    niri.enable = lib.mkDefault (osConfig.programs.niri.enable or false);
+    terminal.enable = lib.mkDefault true;
+    zellij.enable = lib.mkDefault true;
   };
 
   programs = {
-    home-manager.enable = true;
-    herdr.enable = false;
-    noctalia.enable = true;
-    orca.enable = true;
-    thunderbird.enable = true;
+    home-manager.enable = lib.mkDefault true;
+    herdr.enable = lib.mkDefault false;
+    noctalia.enable = lib.mkDefault (osConfig.programs.noctalia.enable or false);
+    orca.enable = lib.mkDefault true;
+    thunderbird.enable = lib.mkDefault true;
 
     super-productivity = {
-      enable = true;
-      mcp.enable = true;
+      enable = lib.mkDefault true;
+      mcp.enable = lib.mkDefault true;
     };
 
     rofi = {
-      enable = true;
+      enable = lib.mkDefault true;
       extraConfig = {
         modi = "drun,emoji,ssh";
       };
@@ -97,7 +99,7 @@
     };
 
     firefox = {
-      enable = true;
+      enable = lib.mkDefault true;
       languagePacks = [ "en-GB" ];
       profiles.timj = {
         containers = {
@@ -115,7 +117,7 @@
   };
 
   services = {
-    trayscale.enable = true;
-    gnome-keyring.enable = true;
+    trayscale.enable = lib.mkDefault true;
+    gnome-keyring.enable = lib.mkDefault true;
   };
 }

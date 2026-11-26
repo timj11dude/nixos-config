@@ -1,7 +1,7 @@
 # Shared NixOS system configuration.
 #
 # Host-specific hardware, disk layout, mounts, and feature toggles live under
-# `modules/hosts/<hostname>/default.nix`.
+# `modules/hosts/<hostname>/configuration.nix` (imported via `default.nix`).
 {
   config,
   pkgs,
@@ -15,7 +15,6 @@ let
 in
 {
   imports = [
-    ./modules/hosts/aether
     ./modules/system/ai
     ./modules/system/backups/restic
     ./modules/system/gaming
@@ -73,7 +72,7 @@ in
   # Bootloader
   boot.loader = {
     systemd-boot = {
-      enable = true;
+      enable = lib.mkDefault true;
       # Keep the 500 MiB ESP from filling up with old generations.
       configurationLimit = 10;
     };
@@ -140,12 +139,12 @@ in
     };
 
     hyprland = {
-      enable = true;
+      enable = lib.mkDefault true;
       withUWSM = true;
       xwayland.enable = true;
     };
 
-    niri.enable = true;
+    niri.enable = lib.mkDefault true;
     zsh.enable = true;
   };
 
@@ -156,7 +155,7 @@ in
     tailscale.enable = true;
 
     greetd = {
-      enable = true;
+      enable = lib.mkDefault true;
       settings = {
         default_session = {
           command = "${config.programs.niri.package}/bin/niri-session";
@@ -218,7 +217,9 @@ in
     extraSpecialArgs = {
       inherit pins;
     };
-    users.timj = ./home.nix;
+    users.timj = {
+      imports = [ ./home.nix ];
+    };
   };
 
   environment = {
@@ -234,7 +235,7 @@ in
   };
 
   # Do not change without reading the NixOS release notes.
-  system.stateVersion = "24.11";
+  system.stateVersion = lib.mkDefault "24.11";
 
   # Garbage collection is handled by `programs.nh.clean` so recent generations
   # are retained for rollback.

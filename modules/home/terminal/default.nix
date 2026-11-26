@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  osConfig ? { },
   pins ? import ../../../pins.nix,
   ...
 }:
@@ -16,6 +17,11 @@ in
 {
   options.my.terminal = {
     enable = lib.mkEnableOption "terminal emulator, shell, git, jujutsu, gpg, and ssh configuration";
+    cudaSupport = lib.mkOption {
+      type = lib.types.bool;
+      default = builtins.elem "nvidia" (osConfig.services.xserver.videoDrivers or [ ]);
+      description = "Enable CUDA support for terminal tools such as btop.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -135,7 +141,7 @@ in
       btop = {
         enable = true;
         package = pkgs.btop.override {
-          cudaSupport = true;
+          inherit (cfg) cudaSupport;
         };
       };
 
