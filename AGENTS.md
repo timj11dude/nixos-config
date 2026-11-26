@@ -40,8 +40,11 @@ For hostnames, mounts, hardware identifiers, scripts, and project terminology, s
 ### Safe / Read-Only Checks
 
 ```bash
-# Intended verification gate (not yet present in repo; to be added)
+# Intended verification gate
 ./check.sh
+
+# Full NixOS build verification (required alongside ./check.sh; does not mutate the live system)
+./rebuild.sh build
 
 # Parse-check all Nix files in the repo (fast, no host dependencies)
 for f in $(fd -e nix); do nix-instantiate --parse "$f" > /dev/null && echo "OK: $f"; done
@@ -76,8 +79,8 @@ nixfmt <file.nix>
 # run on the NixOS live installer; `--dry-run` is the only mode safe elsewhere.
 ./install.sh [--dry-run] [--host <name>] [--from <host|_template>] [--root <path>]
 
-# Copy repo files to /etc/nixos/ and run nixos-rebuild (mutates /etc/nixos/ and live system)
-./rebuild.sh <dry-build|test|boot|switch>
+# Mutate live system (requires explicit owner approval; `./rebuild.sh build` / `dry-build` / `build-vm` are safe for verification)
+./rebuild.sh <test|boot|switch>
 
 # Edit SOPS secrets (sops is not globally installed; run via nix-shell)
 nix-shell -p sops --run "sops secrets/secrets.yaml"
@@ -96,7 +99,7 @@ nix-shell -p sops --run "sops secrets/secrets.yaml"
 
 ## 5. Safety Guardrails (Hard Rules)
 
-1. **No live system mutations without approval:** Never run `./rebuild.sh`, `nixos-rebuild switch|boot|test`, `disko`, or modify/delete anything under `/etc/nixos/`.
+1. **No live system mutations without approval:** Never run `./rebuild.sh switch|boot|test`, `nixos-rebuild switch|boot|test`, `disko`, or modify/delete anything under `/etc/nixos/`. (`./rebuild.sh build`, `dry-build`, and `build-vm` do not mutate the live system and are allowed for verification.)
 2. **No disk layout edits without explicit request:** Do not edit `modules/hosts/aether/disko.nix` unless the task explicitly asks for disk/LVM changes.
 3. **Zero secret exposure:** Never decrypt, read plaintext, print, log, or commit secrets from `secrets/secrets.yaml`, `/home/timj/.config/sops/age/keys.txt`, `/home/timj/.config/restic/password`, or GPG/SSH keys.
 4. **No generated/local artifacts in Git:** Never edit or stage `hardware-configuration.nix`, `result`, or `result/`.
@@ -116,10 +119,10 @@ nix-shell -p sops --run "sops secrets/secrets.yaml"
 
 1. Changes live in the right layer (`configuration.nix` vs `home.nix` vs `modules/<domain>/`) and do not edit dead/unreferenced files.
 2. Any newly added unfree packages are explicitly allowlisted in the correct `allowUnfreePredicate` (`configuration.nix` vs `home.nix`).
-3. Run `./check.sh` (once added); until then, verify all modified `.nix` files pass `nix-instantiate --parse` and format only edited `.nix` files with `nixfmt <file.nix>`.
+3. Run **both** `./check.sh` and `./rebuild.sh build` to verify that the full system configuration evaluates and builds cleanly (not just `./check.sh`, which can miss build-time failures that break `switch`). If `./rebuild.sh build` cannot run (e.g., `hardware-configuration.nix` is absent in an isolated worktree), explicitly report that. Format only edited `.nix` files with `nixfmt <file.nix>`.
 4. `git status` / `git diff` shows no plaintext secrets, local keys, `hardware-configuration.nix`, `result`, or unintended formatting churn.
 5. `AGENTS.md` and `GLOSSARY.md` are updated if new modules, hosts, mounts, scripts, or conventions were introduced.
-6. Clearly report any host-level checks not run (e.g., `./rebuild.sh dry-build` / `test` / `switch`).
+6. Clearly report any host-level checks not run (e.g., `./rebuild.sh build` if blocked, or `./rebuild.sh test` / `switch`).
 
 ## 8. Related Documentation
 

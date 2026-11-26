@@ -91,6 +91,6 @@ NIXPKGS_PATH="$(resolve_nixpkgs)"
 
 echo "Host: $HOST"
 echo "Generation label: $NIXOS_LABEL"
-sudo NIXOS_LABEL="$NIXOS_LABEL" nixos-rebuild "${ARGS[@]}" \
+NIXOS_LABEL="$NIXOS_LABEL" nixos-rebuild "${ARGS[@]}" \
   -I nixpkgs="$NIXPKGS_PATH" \
   -I nixos-config="$HOST_ENTRYPOINT"
