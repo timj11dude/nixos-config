@@ -1027,7 +1027,7 @@ ${C_BOLD}Post-install checklist${C_RESET}
   1. Log in as $TARGET_USER and run ./bootstrap-secrets.sh from $TARGET_REPO_PATH
      (materialises the sops age key and restic password).
   2. Once the machine works, commit modules/hosts/$HOST_NAME/ in
-     $TARGET_REPO_PATH (hardware-configuration.nix is gitignored).
+     $TARGET_REPO_PATH.
   3. Rebuild with ./rebuild.sh --host $HOST_NAME <switch|test|boot> when changing config.
 
 EOF

@@ -15,12 +15,11 @@ Follow these steps to add a new NixOS machine to this repository (or to bootstra
    Edit `modules/hosts/<hostname>/configuration.nix` and replace `__HOSTNAME__` with `<hostname>` (matching the directory name so `./rebuild.sh` auto-detects it via `$(hostname -s)`). Directories starting with `_` (such as `_template`) are ignored by `./check.sh`; any other directory under `modules/hosts/` is automatically evaluated.
 
 2. **Generate `hardware-configuration.nix` on the target machine:**
-   `modules/hosts/<hostname>/default.nix` imports `./hardware-configuration.nix`, which is gitignored and machine-local:
+   `modules/hosts/<hostname>/default.nix` imports `./hardware-configuration.nix`:
    ```sh
    nixos-generate-config --show-hardware-config > modules/hosts/<hostname>/hardware-configuration.nix
    ```
    - If the host uses a host-local `disko.nix`, pass `--no-filesystems` to `nixos-generate-config` so `fileSystems` definitions do not conflict.
-   - If setting up an existing host (such as `aether`) from a fresh clone, run this same command on that machine to populate its gitignored `hardware-configuration.nix` before rebuilding.
 
 3. **Configure host options, hardware, and overrides** in `modules/hosts/<hostname>/configuration.nix`:
    - **Feature toggles:** Enable host-level options as needed (`ai.enable`, `gaming.enable`, `programs.noctalia.enable`, `backups.restic.enable`, `services.orca-ide.enable` / `services.orca-server.enable`, `services.herdr.enable`). Coupled Home Manager options in `home.nix` (`my.gaming.enable`, `my.niri.enable`, `programs.noctalia.enable`, and `my.terminal.cudaSupport`) follow `osConfig` automatically.
@@ -42,7 +41,7 @@ Follow these steps to add a new NixOS machine to this repository (or to bootstra
    # Point /etc/nixos/configuration.nix at the host entrypoint for system.autoUpgrade
    sudo ln -sfn "$PWD/modules/hosts/$(hostname -s)/default.nix" /etc/nixos/configuration.nix
    ```
-   - `./check.sh` evaluates hosts without a local `hardware-configuration.nix` using `modules/system/hardware-stub.nix`, whereas `./rebuild.sh` requires the real machine-generated `hardware-configuration.nix`.
+   - `./check.sh` evaluates each host's `modules/hosts/<hostname>/default.nix` directly, and `./rebuild.sh` builds from the same entrypoint.
    - If you modified Niri config (`extraConfig` / `extraInputConfig`), you can also run the build-time `niri validate` check directly before rebuilding:
      ```sh
      nix-build '<nixpkgs/nixos>' --no-out-link \
@@ -50,12 +49,12 @@ Follow these steps to add a new NixOS machine to this repository (or to bootstra
        -A 'config.home-manager.users.timj.xdg.configFile."niri/config.kdl".source'
      ```
 
-5. **Commit the tracked host files:**
-   Commit `modules/hosts/<hostname>/default.nix`, `modules/hosts/<hostname>/configuration.nix`, and any host assets (such as `niri.kdl`). Leave `hardware-configuration.nix` untracked/gitignored.
+5. **Commit the host files:**
+   Commit `modules/hosts/<hostname>/default.nix`, `modules/hosts/<hostname>/configuration.nix`, `modules/hosts/<hostname>/hardware-configuration.nix`, and any host assets (such as `niri.kdl` or `disko.nix`).
 
 ## Architecture & Deployment
 
-- **Shared Base & Per-Host Entrypoints:** Top-level `configuration.nix` defines shared system defaults (with `lib.mkDefault` for host-overridable options) and imports Home Manager (`home-manager.users.timj = { imports = [ ./home.nix ]; };`). Each machine lives under `modules/hosts/<hostname>/` with `default.nix` (importing `./configuration.nix` and gitignored `./hardware-configuration.nix`). See [Onboarding](#onboarding) and [`modules/hosts/README.md`](./modules/hosts/README.md) when adding a machine.
+- **Shared Base & Per-Host Entrypoints:** Top-level `configuration.nix` defines shared system defaults (with `lib.mkDefault` for host-overridable options) and imports Home Manager (`home-manager.users.timj = { imports = [ ./home.nix ]; };`). Each machine lives under `modules/hosts/<hostname>/` with `default.nix` (importing `./configuration.nix` and `./hardware-configuration.nix`). See [Onboarding](#onboarding) and [`modules/hosts/README.md`](./modules/hosts/README.md) when adding a machine.
 - **Deployment:** Run `./rebuild.sh [--host <name>] <switch|boot|test|dry-build>`. The host defaults to `$NIXOS_HOST` or `$(hostname -s)` and evaluates `modules/hosts/<host>/default.nix` directly via `-I nixos-config=...`.
 - **Auto-Upgrade Symlink:** For `system.autoUpgrade` to evaluate the right host automatically, symlink `/etc/nixos/configuration.nix` to this checkout's `modules/hosts/<hostname>/default.nix` (e.g. `sudo ln -sfn "$PWD/modules/hosts/$(hostname -s)/default.nix" /etc/nixos/configuration.nix`).
 - **Agent & Contributor Docs:** See [`AGENTS.md`](./AGENTS.md) for workflows, conventions, and guardrails, and [`GLOSSARY.md`](./GLOSSARY.md) for hostnames, storage mounts, scripts, and project terminology.
@@ -112,12 +111,15 @@ home-manager switch -f ~/.config/home-manager/home.nix
 
 Note: some modules in this config reference Linux-specific paths (e.g. `/home/timj`, systemd services). On macOS you may need to adjust `home.homeDirectory` and disable any Linux-only modules in `home.nix`.
 
-## Checks
+## Checks & CI
 
-Run `./check.sh` before rebuilding. It parses every Nix file, evaluates the
-full system configuration, checks `nixfmt` formatting across the repository,
-and runs `statix` and `deadnix` lint checks. Run `./nixfmt.sh` to auto-format
-all Nix files.
+Run `./check.sh` before rebuilding (or `./check.sh all` to include targeted build validation). It supports tiered checks shared with GitHub Actions (`.github/workflows/ci.yml`):
+
+1. **Tier 1 (`./check.sh lint`):** Shell syntax (`bash -n`), `shellcheck` (excluding legacy `diff.sh`), GitHub Actions linting (`actionlint`), Nix syntax parsing (`nix-instantiate --parse`), `nixfmt --check`, `statix`, and `deadnix`.
+2. **Tier 2 (`./check.sh eval`):** Full NixOS + Home Manager evaluation of every non-underscore host under `modules/hosts/*/default.nix`. In CI, this tier also runs `./install.sh --dry-run` against both `_template` and a host copy.
+3. **Tier 3 (`./check.sh build`):** Targeted builds of the repository's own build-time validators and lightweight custom derivations (`niri validate` on rendered `niri/config.kdl`, `opencode-quota`, and `zellij-room`). A full `nixos-rebuild build` is skipped in CI because `aether`'s ~31.5 GiB closure (including unfree packages such as IntelliJ IDEA, CUDA/Ollama, NVIDIA kernel modules, Steam/Lutris, and LibreOffice) exceeds standard GitHub runner disk budgets.
+
+Pull requests targeting `main` run all tiers against the merged result (`refs/pull/<n>/merge`) and report a single `CI Gate` check suitable for branch protection / merge queues. Run `./nixfmt.sh` to auto-format all Nix files.
 
 ## TODO
 Tracking what parts of my existing setup I would like to manage with `home-manager`,
