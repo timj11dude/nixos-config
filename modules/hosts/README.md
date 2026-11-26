@@ -14,14 +14,13 @@ modules/hosts/
 └── <hostname>/
     ├── configuration.nix          # Tracked host config (imports ../../../configuration.nix)
     ├── default.nix                # Tracked entrypoint (imports ./configuration.nix + ./hardware-configuration.nix)
-    ├── hardware-configuration.nix # Gitignored, machine-local (generated on the target host)
+    ├── hardware-configuration.nix # Tracked hardware scan (generated on the target host via nixos-generate-config)
     └── ...                        # Optional host-specific assets (e.g. niri.kdl, local disko.nix)
 ```
 
 ### Why `default.nix` and `configuration.nix` are split
 
-- **`./rebuild.sh`** always evaluates `modules/hosts/<hostname>/default.nix` and fails fast if `hardware-configuration.nix` is missing, preventing accidental builds without machine hardware/filesystem modules.
-- **`./check.sh`** loops over every `modules/hosts/*/` (skipping `_*`). When `hardware-configuration.nix` exists locally it evaluates `default.nix`; otherwise it evaluates `configuration.nix` together with [`modules/system/hardware-stub.nix`](../system/hardware-stub.nix).
+- Keeping `configuration.nix` separate from the `nixos-generate-config` output (`hardware-configuration.nix`) lets you regenerate `hardware-configuration.nix` cleanly without touching hand-edited host config, while `default.nix` composes both as the single host entrypoint used by `./rebuild.sh`, `./check.sh`, and `system.autoUpgrade`.
 
 ## Onboarding a New Host
 
@@ -31,12 +30,11 @@ modules/hosts/
    ```
    Replace `__HOSTNAME__` in `modules/hosts/<hostname>/configuration.nix` with `<hostname>`. Ensure `networking.hostName` matches the directory name so `./rebuild.sh` auto-detects the host via `$(hostname -s)`.
 
-2. **Generate `hardware-configuration.nix` on the target machine** (this file is gitignored and must stay untracked):
+2. **Generate `hardware-configuration.nix` on the target machine:**
    ```sh
    nixos-generate-config --show-hardware-config > modules/hosts/<hostname>/hardware-configuration.nix
    ```
    - Pass `--no-filesystems` if the host defines its own `disko.nix`.
-   - When cloning this repo onto an existing host (e.g. `aether`), run the same command on that host to populate its local `hardware-configuration.nix`.
 
 3. **Customize `modules/hosts/<hostname>/configuration.nix`:**
    - **System toggles:** Enable host features as needed (`ai.enable`, `gaming.enable`, `programs.noctalia.enable`, `backups.restic.enable`, `services.orca-ide.enable` / `services.orca-server.enable`, `services.herdr.enable`). Home Manager modules (`my.gaming.enable`, `my.niri.enable`, `programs.noctalia.enable`, `my.terminal.cudaSupport`) derive defaults from `osConfig`.
@@ -60,4 +58,4 @@ modules/hosts/
      -A 'config.home-manager.users.timj.xdg.configFile."niri/config.kdl".source'
    ```
 
-5. **Commit tracked files:** Commit `default.nix`, `configuration.nix`, and any host assets (`niri.kdl`, etc.); keep `hardware-configuration.nix` untracked.
+5. **Commit host files:** Commit `default.nix`, `configuration.nix`, `hardware-configuration.nix`, and any host assets (`niri.kdl`, `disko.nix`, etc.).
