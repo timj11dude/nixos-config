@@ -20,6 +20,7 @@ in
 
     nixpkgs.config.allowUnfreePackages = [
       "discord"
+      "discord-unwrapped"
       "steam"
       "steam-unwrapped"
       "wowup-cf"

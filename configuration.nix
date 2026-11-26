@@ -48,7 +48,7 @@ in
   # unfree packages are declared in their respective modules.
   nixpkgs.config = {
     allowUnfreePackages = [
-      "idea"
+      "intellij-idea"
       "obsidian"
       "rider"
       "terraform"
@@ -65,7 +65,9 @@ in
       lib.hasPrefix "cuda" name
       || lib.hasPrefix "libcu" name
       || lib.hasPrefix "libnpp" name
-      || name == "libnvjitlink";
+      || name == "cccl"
+      || name == "libnvjitlink"
+      || name == "libnvvm";
   };
 
   # Bootloader

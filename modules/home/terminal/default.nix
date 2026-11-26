@@ -25,7 +25,6 @@ in
       eza
       nixfmt
       pins.unstablePkgs.bws
-      secretspec
       statix
       unzip
       withGpg

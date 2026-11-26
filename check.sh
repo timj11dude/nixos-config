@@ -18,7 +18,8 @@ for file in "${nix_files[@]}"; do
 done
 
 echo "==> Evaluating the system configuration"
-nix-instantiate '<nixpkgs/nixos>' -A system --arg configuration ./configuration.nix > /dev/null
+NIXPKGS_PATH="$(nix-instantiate --eval -E '(import ./pins.nix).nixpkgs' --raw)"
+nix-instantiate -I nixpkgs="$NIXPKGS_PATH" '<nixpkgs/nixos>' -A system --arg configuration ./configuration.nix > /dev/null
 
 echo "==> Checking formatting (nixfmt)"
 nixfmt --check "${nix_files[@]}"

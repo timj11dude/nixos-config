@@ -29,7 +29,7 @@
       digikam
       feh
       fuzzel
-      gcr
+      gcr_4
       gimp
       jetbrains.idea
       libreoffice
