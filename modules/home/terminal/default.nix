@@ -8,11 +8,6 @@
 }:
 let
   cfg = config.my.terminal;
-  withGpg = import ./gnupg/with-gpg.nix {
-    inherit pkgs;
-    inherit (pins) unstablePkgs;
-    secretspecFile = ../../../secretspec.toml;
-  };
 in
 {
   options.my.terminal = {
@@ -33,7 +28,6 @@ in
       pins.unstablePkgs.bws
       statix
       unzip
-      withGpg
     ];
 
     home.file."${config.xdg.dataHome}/gnupg/pinentry.sh" = {
@@ -260,6 +254,9 @@ in
       enableSshSupport = true;
       enableZshIntegration = true;
       pinentry.package = pkgs.pinentry-qt;
+      sshKeys = [
+        "BF3EDDD040FDF9435FD5F9B24577FB832C6B0E49" # source via `gpg --list-secret-keys --with-keygrip timj91@gmail.com`
+      ];
     };
   };
 }

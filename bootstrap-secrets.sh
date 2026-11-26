@@ -23,4 +23,4 @@ secretspec run -- bash -euo pipefail -c '
   chmod 600 "${HOME}/.config/sops/age/keys.txt" "${HOME}/.config/restic/password"
 '
 
-echo "Done. GPG_PRIVATE_KEY was not written to disk; use 'with-gpg' for ephemeral GPG/SSH sessions."
+echo "Done. Materialized sops age key and restic password."
