@@ -223,6 +223,38 @@ in
   };
 
   environment = {
+    # NVIDIA's bundled application profiles set `GLVidHeapReuseRatio = 0` for
+    # Hyprland, cosmic-comp, kwin, mutter, wlroots, and weston, but omit niri.
+    # Without this, the GL driver hoards freed framebuffer allocations in niri's
+    # heap until VRAM is exhausted and NVKMS GEM allocations fail on wake.
+    # Ref: https://niri-wm.github.io/niri/Nvidia.html
+    etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-niri.json" =
+      lib.mkIf (config.programs.niri.enable && lib.elem "nvidia" config.services.xserver.videoDrivers)
+        {
+          text = builtins.toJSON {
+            rules = [
+              {
+                pattern = {
+                  feature = "procname";
+                  matches = "niri";
+                };
+                profile = "Limit Free Buffer Pool On Wayland Compositors";
+              }
+            ];
+            profiles = [
+              {
+                name = "Limit Free Buffer Pool On Wayland Compositors";
+                settings = [
+                  {
+                    key = "GLVidHeapReuseRatio";
+                    value = 0;
+                  }
+                ];
+              }
+            ];
+          };
+        };
+
     pathsToLink = [ "/share/zsh" ];
     systemPackages = with pkgs; [
       comma
