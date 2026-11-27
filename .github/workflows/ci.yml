@@ -1,0 +1,111 @@
+name: CI
+
+# Pull request workflows run against GitHub's synthetic merge commit
+# (`refs/pull/<number>/merge`), validating the merged result with `main`
+# rather than the PR branch in isolation. Pair this workflow with branch
+# protection ("Require branches to be up to date before merging" + require
+# the `CI Gate` check) or a merge queue (`merge_group`) to guarantee every
+# merge into `main` was validated against the latest base commit.
+on:
+  pull_request:
+    branches: [main]
+  merge_group:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lint:
+    name: "Tier 1: Lint & Format"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout merged result
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Nix
+        uses: ./.github/actions/setup-nix
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Tier 1 checks (shell syntax/shellcheck, actionlint, Nix parse, nixfmt, statix, deadnix)
+        run: ./check.sh lint
+
+  validate:
+    name: "Tier 2: Evaluate Configurations"
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout merged result
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Nix
+        uses: ./.github/actions/setup-nix
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Evaluate all host configurations
+        run: ./check.sh eval
+
+      - name: Smoke-test Live ISO installer (_template dry-run)
+        run: ./install.sh --dry-run --host ci-template --from _template --yes --root /tmp/ci-fake-mnt
+
+      - name: Smoke-test Live ISO installer (host copy dry-run)
+        run: ./install.sh --dry-run --host ci-copy --from aether --yes --root /tmp/ci-fake-mnt
+
+  # A full `nixos-rebuild build` of `aether` is intentionally skipped on
+  # GitHub-hosted runners: its system closure is ~31.5 GiB (including large
+  # unfree packages not cached on cache.nixos.org such as IntelliJ IDEA,
+  # CUDA/Ollama, NVIDIA kernel modules, Steam/Lutris, and LibreOffice), which
+  # exceeds the ~14 GB free disk budget of standard `ubuntu-latest` runners.
+  # Instead, Tier 3 builds the repository's own build-time config validators
+  # and lightweight custom derivations (e.g. `niri validate`, `opencode-quota`,
+  # and `zellij-room`).
+  build:
+    name: "Tier 3: Targeted Build Validation"
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout merged result
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Nix
+        uses: ./.github/actions/setup-nix
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build repo config validators & custom derivations
+        run: ./check.sh build
+
+  # Single required status check for GitHub branch protection / rulesets.
+  # Explicitly fails if any upstream tier failed, was cancelled, or was skipped.
+  ci-gate:
+    name: "CI Gate"
+    needs: [lint, validate, build]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify all tiers succeeded
+        env:
+          LINT_RESULT: ${{ needs.lint.result }}
+          VALIDATE_RESULT: ${{ needs.validate.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+        run: |
+          echo "Tier 1 (lint):     $LINT_RESULT"
+          echo "Tier 2 (validate): $VALIDATE_RESULT"
+          echo "Tier 3 (build):    $BUILD_RESULT"
+          if [[ "$LINT_RESULT" != "success" || "$VALIDATE_RESULT" != "success" || "$BUILD_RESULT" != "success" ]]; then
+            echo "One or more CI tiers did not succeed." >&2
+            exit 1
+          fi
